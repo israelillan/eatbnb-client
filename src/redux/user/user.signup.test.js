@@ -1,11 +1,12 @@
 import {takeLatest, put, call} from 'redux-saga/effects';
 
-import {onSignUpStart, signUp, onSignUpSuccess, signInAfterSignUp, getSnapshotFromUserAuth} from "./user.sagas";
+import {onSignUpStart, signUp, onSignUpSuccess, signInAfterSignUp} from "./user.sagas";
 import UserActionTypes from "./user.actions.types";
 import {auth} from "../../firebase/firebase.utils";
 import {signUpFailure, signUpStart, signUpSuccess} from "./user.actions";
 import userReducer from "./user.reducer";
 import INITIAL_STATE from "./user.state";
+import {createUserProfileDocument} from "./user.firebase";
 
 describe('user signup', () => {
     it('initial state', () => {
@@ -40,7 +41,7 @@ describe('user signup', () => {
         expect(mockCreateUserWithEmailAndPassword).toHaveBeenCalledWith(mockUser.email, mockUser.password);
     });
     it('do not set current user on sign up success', () => {
-        expect(userReducer(undefined, signUpSuccess(mockUser))).toEqual({
+        expect(userReducer(INITIAL_STATE, signUpSuccess(mockUser))).toEqual({
             currentUser: null,
             error: null
         })
@@ -55,11 +56,11 @@ describe('user signup', () => {
         const generator = signInAfterSignUp({
             payload: {
                 user: {email: mockUser.email},
-                additionalData: {managerName: mockUser.managerName}
+                managerName: mockUser.managerName
             }
         });
         expect(generator.next().value).toEqual(
-            getSnapshotFromUserAuth(mockUser, {additionalData: {managerName: mockUser.managerName}})
+            createUserProfileDocument({ email: mockUser.email}, mockUser.managerName)
         );
     });
     it('set error on sign up failure', () => {

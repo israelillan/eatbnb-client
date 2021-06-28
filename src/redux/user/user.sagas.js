@@ -4,22 +4,9 @@ import {signInSuccess, signInFailure, signUpFailure, signUpSuccess} from "./user
 import {auth} from "../../firebase/firebase.utils";
 import {createUserProfileDocument} from "./user.firebase";
 
-export function* getSnapshotFromUserAuth(userAuth, additionalData) {
-    try {
-        const userRef = yield createUserProfileDocument(
-            userAuth,
-            additionalData
-        );
-        const userSnapshot = yield userRef.get();
-        yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
-    } catch (error) {
-        yield put(signInFailure(error));
-    }
-}
-
 export function* signUp({ payload: { email, password, managerName } }) {
     try {
-        const { user } = yield auth.createUserWithEmailAndPassword(email, password);
+        const user = yield auth.createUserWithEmailAndPassword(email, password);
         yield put(signUpSuccess({ user, managerName }));
     } catch (error) {
         yield put(signUpFailure(error));
@@ -34,8 +21,17 @@ export function* onSignUpSuccess() {
     yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
 }
 
-export function* signInAfterSignUp({ payload: { user, additionalData } }) {
-    yield getSnapshotFromUserAuth(user, additionalData);
+export function* signInAfterSignUp({ payload: { userAuth, managerName } }) {
+    try {
+        const userRef = yield createUserProfileDocument(
+            userAuth,
+            managerName
+        );
+        const userSnapshot = yield userRef.get();
+        yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+    } catch (error) {
+        yield put(signInFailure(error));
+    }
 }
 
 export function* userSagas() {

@@ -5,22 +5,20 @@ export const signUpStart = (email, password, managerName) => ({
     payload: { email, password, managerName }
 });
 
-export const signUpSuccess = (user) => ({
-    type: UserActionTypes.SIGN_UP_SUCCESS,
-    payload: user
-});
-
-export const signUpFailure = error => ({
-    type: UserActionTypes.SIGN_IN_OR_UP_FAILURE,
-    payload: error
-});
-
 export const signInSuccess = (user) => ({
     type: UserActionTypes.SIGN_IN_SUCCESS,
     payload: user
 });
 
-export const signInFailure = (user) => ({
+export const signInOrUpFailure = (error) => ({
     type: UserActionTypes.SIGN_IN_OR_UP_FAILURE,
-    payload: user
+    payload: error
 });
+
+export const logoutStart = () => ({
+    type: UserActionTypes.LOGOUT_START
+})
+
+export const logoutSuccess = () => ({
+    type: UserActionTypes.LOGOUT_SUCCESS
+})

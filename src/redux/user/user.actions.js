@@ -29,7 +29,7 @@ export const signOutSuccess = () => ({
 });
 
 export const backendError = (error) => ({
-    type: UserActionTypes.BACKEND_ERROR,
+    type: UserActionTypes.USER_BACKEND_ERROR,
     payload: {error}
 })
 

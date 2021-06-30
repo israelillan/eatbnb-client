@@ -2,45 +2,15 @@ import Parse from "../../backend/parse.utils";
 import INITIAL_STATE from "./user.state";
 import {setRestaurantNameStart, signInStart, signInSuccess, signOutStart, signUpStart} from "./user.actions";
 import {onSetRestaurantNameStart, onSignInStart, onSignOutStart, onSignUpStart} from "./user.sagas";
-import {testSaga} from "../../tests/tests.utils";
+import {
+    cleanMockUser,
+    mockUser,
+    mockUserPassword, signInUser,
+    signOutUser,
+    signUpMockUser,
+    testSaga
+} from "../../tests/tests.utils";
 import userReducer from "./user.reducer";
-
-const mockUser = {
-    email: 'testUser@eatbnb.com',
-    managerName: 'Test User'
-};
-const mockUserPassword = 'password';
-
-const signUpMockUser = async () => {
-    const user = new Parse.User();
-    user.set("username", mockUser.email);
-    user.set("password", mockUserPassword);
-    user.set("email", mockUser.email);
-    user.set("managerName", mockUser.managerName);
-
-    await user.signUp();
-};
-const cleanMockUser = async () => {
-    try {
-        await Parse.User.logIn(mockUser.email, mockUserPassword);
-    } catch (e) {
-        if (e.code !== 101) {
-            throw e;
-        }
-    }
-
-    if (Parse.User.current()) {
-        await Parse.User.current().destroy();
-    }
-};
-
-const signInUser = async () => {
-    await Parse.User.logIn(mockUser.email, mockUserPassword);
-};
-
-const signOutUser = async () => {
-    await Parse.User.logOut();
-};
 
 describe('sign up user tests', () => {
     beforeAll(cleanMockUser);

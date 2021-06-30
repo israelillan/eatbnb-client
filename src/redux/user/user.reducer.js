@@ -21,7 +21,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
                 currentUser: null,
                 error: null
             };
-        case UserActionTypes.BACKEND_ERROR:
+        case UserActionTypes.USER_BACKEND_ERROR:
             return {
                 ...state,
                 error: action.payload.error

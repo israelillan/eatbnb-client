@@ -1,0 +1,8 @@
+const TableActionsTypes = {
+    CREATE_TABLE_START: 'CREATE_TABLE_START',
+    CREATE_TABLE_SUCCESS: 'CREATE_TABLE_SUCCESS',
+
+    TABLE_BACKEND_ERROR: 'TABLE_BACKEND_ERROR'
+};
+
+export default TableActionsTypes;

@@ -1,7 +1,7 @@
 import Parse from "../../backend/parse.utils";
 import INITIAL_STATE from "./user.state";
-import {signUpStart, signOutStart, signInSuccess, signInStart} from "./user.actions";
-import {onSignUpStart, onSignOutStart, onSignInStart} from "./user.sagas";
+import {setRestaurantNameStart, signInStart, signInSuccess, signOutStart, signUpStart} from "./user.actions";
+import {onSetRestaurantNameStart, onSignInStart, onSignOutStart, onSignUpStart} from "./user.sagas";
 import {testSaga} from "../../tests/tests.utils";
 import userReducer from "./user.reducer";
 
@@ -42,10 +42,9 @@ const signOutUser = async () => {
     await Parse.User.logOut();
 };
 
-describe('logged out user tests', () => {
+describe('sign up user tests', () => {
     beforeAll(cleanMockUser);
     afterAll(cleanMockUser);
-    beforeEach(signOutUser)
 
     it('sign up saga', async () => {
         const {finalState} = await testSaga(INITIAL_STATE, signUpStart(mockUser.email, mockUserPassword, mockUser.managerName), onSignUpStart());
@@ -58,6 +57,13 @@ describe('logged out user tests', () => {
         expect(finalState.currentUser.restaurantName).toBeFalsy();
         expect(finalState.currentUser.emailVerified).toBeFalsy();
     });
+});
+
+describe('logged out user tests', () => {
+    beforeAll(signUpMockUser);
+    afterAll(cleanMockUser);
+    beforeEach(signOutUser);
+
     it('sign in saga', async () => {
         const {finalState} = await testSaga(INITIAL_STATE, signInStart(mockUser.email, mockUserPassword), onSignInStart());
 
@@ -87,5 +93,15 @@ describe('logged in user tests', () => {
         expect(Parse.User.current()).toBeFalsy();
         expect(finalState.error).toBeFalsy();
         expect(finalState.currentUser).toBeFalsy();
+    });
+    it('set restaurant name', async () => {
+        const {finalState} = await testSaga(userReducer(INITIAL_STATE, signInSuccess(mockUser)),
+            setRestaurantNameStart('Test Restaurant'), onSetRestaurantNameStart());
+
+        expect(Parse.User.current()).toBeTruthy();
+        expect(finalState.error).toBeFalsy();
+        expect(finalState.currentUser.email).toEqual(mockUser.email);
+        expect(finalState.currentUser.managerName).toEqual(mockUser.managerName);
+        expect(finalState.currentUser.restaurantName).toEqual('Test Restaurant');
     });
 });

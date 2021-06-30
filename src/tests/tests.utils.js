@@ -1,6 +1,5 @@
 import {runSaga} from "redux-saga";
 import userReducer from "../redux/user/user.reducer";
-import INITIAL_STATE from "../redux/user/user.state";
 
 export const testSaga = async (initialState, startActionData, generator) => {
     const generatorReturn = generator.next().value;
@@ -14,7 +13,7 @@ export const testSaga = async (initialState, startActionData, generator) => {
 
     let finalState = initialState;
     actionsDispatched.forEach(action => {
-        finalState = userReducer(INITIAL_STATE, action);
+        finalState = userReducer(initialState, action);
     })
 
     return {actionsDispatched, finalState};

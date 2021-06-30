@@ -1,9 +1,16 @@
-import { takeLatest, put, all, call } from 'redux-saga/effects';
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 import UserActionTypes from "./user.actions.types";
-import {signInSuccess, signInOrUpFailure, signOutSuccess} from "./user.actions";
+import {
+    backendError,
+    setRestaurantNameStart,
+    setRestaurantNameSuccess,
+    signInOrUpFailure,
+    signInSuccess,
+    signOutSuccess
+} from "./user.actions";
 import Parse from "../../backend/parse.utils";
 
-function* signUp({ payload: { email, password, managerName } }) {
+function* signUp({payload: {email, password, managerName}}) {
     const user = new Parse.User();
     user.set("username", email);
     user.set("password", password);
@@ -14,7 +21,7 @@ function* signUp({ payload: { email, password, managerName } }) {
         yield user.signUp();
         const currentUser = Parse.User.current();
         const attrs = currentUser.attributes
-        yield put(signInSuccess({ id: currentUser.id, ...attrs}));
+        yield put(signInSuccess({id: currentUser.id, ...attrs}));
     } catch (error) {
         yield put(signInOrUpFailure(error));
     }
@@ -37,12 +44,12 @@ export function* onSignOutStart() {
     yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
 }
 
-function* signIn({ payload: { email, password } }) {
+function* signIn({payload: {email, password}}) {
     try {
         yield Parse.User.logIn(email, password);
         const currentUser = Parse.User.current();
         const attrs = currentUser.attributes
-        yield put(signInSuccess({ id: currentUser.id, ...attrs}));
+        yield put(signInSuccess({id: currentUser.id, ...attrs}));
     } catch (error) {
         yield put(signInOrUpFailure(error));
     }
@@ -52,9 +59,25 @@ export function* onSignInStart() {
     yield takeLatest(UserActionTypes.SIGN_IN_START, signIn);
 }
 
+function* setRestaurantName({payload: {restaurantName}}) {
+    try {
+        Parse.User.current().set('restaurantName', restaurantName);
+        yield Parse.User.current().save();
+        yield put(setRestaurantNameSuccess(restaurantName));
+    } catch (error) {
+        yield put(backendError(error));
+    }
+}
+
+export function* onSetRestaurantNameStart() {
+    yield takeLatest(UserActionTypes.SET_RESTAURANT_NAME_START, setRestaurantName)
+}
+
 export function* userSagas() {
     yield all([
         call(onSignUpStart),
-        call(onSignInStart)
+        call(onSignInStart),
+        call(onSignOutStart),
+        call(onSetRestaurantNameStart)
     ]);
 }

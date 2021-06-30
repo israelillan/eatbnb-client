@@ -1,9 +1,9 @@
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import UserActionTypes from "./user.actions.types";
-import {signInSuccess, signInOrUpFailure} from "./user.actions";
+import {signInSuccess, signInOrUpFailure, logoutSuccess} from "./user.actions";
 import Parse from "../../backend/parse.utils";
 
-export function* signUp({ payload: { email, password, managerName } }) {
+function* signUp({ payload: { email, password, managerName } }) {
     const user = new Parse.User();
     user.set("username", email);
     user.set("password", password);
@@ -24,7 +24,20 @@ export function* onSignUpStart() {
     yield takeLatest(UserActionTypes.SIGN_UP_START, signUp);
 }
 
-export function* signIn({ payload: { email, password } }) {
+function* logout() {
+    try {
+        yield Parse.User.logOut();
+        yield put(logoutSuccess());
+    } catch (error) {
+        yield put(signInOrUpFailure(error));
+    }
+}
+
+export function* onLogoutStart() {
+    yield takeLatest(UserActionTypes.LOGOUT_START, logout);
+}
+
+function* signIn({ payload: { email, password } }) {
     try {
         const { user } = yield auth.signInWithEmailAndPassword(email, password);
         yield getSnapshotFromUserAuth(user);

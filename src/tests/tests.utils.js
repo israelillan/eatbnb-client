@@ -1,8 +1,7 @@
 import {runSaga} from "redux-saga";
-import userReducer from "../redux/user/user.reducer";
 import Parse from "../backend/parse.utils";
 
-export const testSaga = async (initialState, startActionData, generator) => {
+export const testSaga = async (initialState, reducer, startActionData, generator) => {
     const generatorReturn = generator.next().value;
     const actionsDispatched = [];
     await runSaga({
@@ -14,19 +13,15 @@ export const testSaga = async (initialState, startActionData, generator) => {
 
     let finalState = initialState;
     actionsDispatched.forEach(action => {
-        finalState = userReducer(initialState, action);
+        finalState = reducer(initialState, action);
     })
 
     return {actionsDispatched, finalState};
 }
 
-export const mockUser = {
-    email: 'testUser@eatbnb.com',
-    managerName: 'Test User'
-};
 export const mockUserPassword = 'password';
 
-export const signUpMockUser = async () => {
+export const signUpMockUser = async (mockUser) => {
     const user = new Parse.User();
     user.set("username", mockUser.email);
     user.set("password", mockUserPassword);
@@ -36,7 +31,7 @@ export const signUpMockUser = async () => {
     await user.signUp();
 };
 
-export const cleanMockUser = async () => {
+export const cleanMockUser = async (mockUser) => {
     try {
         await Parse.User.logIn(mockUser.email, mockUserPassword);
     } catch (e) {
@@ -50,11 +45,11 @@ export const cleanMockUser = async () => {
     }
 };
 
-export const signInUser = async () => {
+export const signInMockUser = async (mockUser) => {
     await Parse.User.logIn(mockUser.email, mockUserPassword);
 };
 
-export const signOutUser = async () => {
+export const signOutMockUser = async () => {
     await Parse.User.logOut();
 };
 

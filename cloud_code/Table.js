@@ -14,20 +14,32 @@ Parse.Cloud.beforeSave("Table", async (request) => {
     if (x < 0 || y < 0 || x > 14 || y > 9) {
         throw new Parse.Error(202, 'Table layout is 15x10');
     }
-    const query = new Parse.Query("Table");
-    query.equalTo('user', user);
-    query.equalTo('x', x);
-    query.equalTo('y', y);
-    const existingTables = await query.find({useMasterKey: true});
+    const tablesInSamePositionQuery = new Parse.Query("Table");
+    tablesInSamePositionQuery.equalTo('user', user);
+    tablesInSamePositionQuery.equalTo('x', x);
+    tablesInSamePositionQuery.equalTo('y', y);
+    const tablesInSamePosition = await tablesInSamePositionQuery.find({useMasterKey: true});
 
     if (request.object.isNew()) {
-        if (existingTables.length !== 0) {
+        if (tablesInSamePosition.length !== 0) {
             throw new Parse.Error(203, 'There is already a table in that spot');
         }
 
-        const config = await Parse.Config.get({useMasterKey: true});
-        const lastReference = config.get("tableAutoReference");
-        const nextReference = lastReference + 1;
+        const allUserTablesQuery = new Parse.Query("Table");
+        allUserTablesQuery.equalTo('user', user);
+        const allUserTables = await allUserTablesQuery.find({useMasterKey: true});
+
+        const existingReferences = new Set();
+        for(let i = 0; i < allUserTables.length; i++) {
+            const reference = allUserTables[i].get('reference');
+            existingReferences.add(reference);
+        }
+
+        let nextReference = 1;
+        while(existingReferences.has(nextReference)) {
+            nextReference++;
+        }
+
         request.object.set('reference', nextReference);
         request.object.set('user', user);
 
@@ -36,8 +48,8 @@ Parse.Cloud.beforeSave("Table", async (request) => {
         }, {useMasterKey: true});
     } else {
         const tableId = request.object.id;
-        for(let i = 0; i < existingTables.length; i++) {
-            if (existingTables[i].id !== tableId) {
+        for(let i = 0; i < tablesInSamePosition.length; i++) {
+            if (tablesInSamePosition[i].id !== tableId) {
                 throw new Parse.Error(203, 'There is already a table in that spot');
             }
         }

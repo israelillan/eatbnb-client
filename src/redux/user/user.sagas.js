@@ -20,7 +20,7 @@ function* signUp({payload: {email, password, managerName}}) {
     try {
         yield user.signUp();
         const currentUser = Parse.User.current();
-        const attrs = currentUser.attributes
+        const attrs = currentUser.attributes;
         yield put(signInSuccess({id: currentUser.id, ...attrs}));
     } catch (error) {
         yield put(signInOrUpFailure(error));

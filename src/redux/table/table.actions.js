@@ -11,6 +11,38 @@ export const createTableStart = (x, y, seats) => ({
 });
 
 export const createTableSuccess = (table) => ({
-   type: TableActionsTypes.CREATE_TABLE_SUCCESS,
-   payload: table
+    type: TableActionsTypes.CREATE_TABLE_SUCCESS,
+    payload: table
 });
+
+export const updateTableStart = (table, x = undefined, y = undefined, seats = undefined) => {
+    x = x ? x : table.x;
+    y = y ? y : table.y;
+    seats = seats ? seats : table.seats;
+    return {
+        type: TableActionsTypes.UPDATE_TABLE_START,
+        payload: {
+            table, x, y, seats
+        }
+    }
+};
+
+export const updateTableSuccess = (table) => ({
+    type: TableActionsTypes.UPDATE_TABLE_SUCCESS,
+    payload: table
+});
+
+export const deleteTableStart = (table) => ({
+    type: TableActionsTypes.DELETE_TABLE_START,
+    payload: table
+});
+
+export const deleteTableSuccess = (table) => ({
+    type: TableActionsTypes.DELETE_TABLE_SUCCESS,
+    payload: table
+});
+
+export const getTableSuccess = (tables) => ({
+    type: TableActionsTypes.GET_TABLE_SUCCESS,
+    payload: tables
+})

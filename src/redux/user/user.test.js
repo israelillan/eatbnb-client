@@ -11,12 +11,13 @@ import {
 } from "../../tests/tests.utils";
 import userReducer from "./user.reducer";
 
-const mockUser = {
-    email: 'testUser@eatbnb.com',
-    managerName: 'Test User'
-};
-
 describe('sign up user tests', () => {
+    const mockUser = {
+        email: 'testUser_1@eatbnb.com',
+        managerName: 'Test User'
+    };
+
+
     beforeAll(async () => await cleanMockUser(mockUser));
     afterAll(async () => await cleanMockUser(mockUser));
 
@@ -34,6 +35,11 @@ describe('sign up user tests', () => {
 });
 
 describe('logged out user tests', () => {
+    const mockUser = {
+        email: 'testUser_2@eatbnb.com',
+        managerName: 'Test User'
+    };
+
     beforeAll(async () => await signUpMockUser(mockUser));
     afterAll(async () => await cleanMockUser(mockUser));
     beforeEach(signOutMockUser);
@@ -56,6 +62,11 @@ describe('logged out user tests', () => {
 });
 
 describe('logged in user tests', () => {
+    const mockUser = {
+        email: 'testUser_4@eatbnb.com',
+        managerName: 'Test User'
+    };
+
     beforeAll(async () => await signUpMockUser(mockUser));
     afterAll(async () => await cleanMockUser(mockUser));
     beforeEach(async () => await signInMockUser(mockUser));

@@ -53,4 +53,4 @@ export const signOutMockUser = async () => {
     await Parse.User.logOut();
 };
 
-jest.setTimeout(20000)
+jest.setTimeout(300 * 1000)

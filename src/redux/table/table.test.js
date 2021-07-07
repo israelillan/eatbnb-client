@@ -14,11 +14,6 @@ import tableReducer from "./table.reducer";
 import {signInStart, signInSuccess, signOutStart} from "../user/user.actions";
 import {onSignInStart, onSignOutStart} from "../user/user.sagas";
 
-const mockUser = {
-    email: 'testTables@eatbnb.com',
-    managerName: 'Test Tables'
-};
-
 describe('logged out table tests', () => {
     beforeEach(signOutMockUser);
 
@@ -30,7 +25,7 @@ describe('logged out table tests', () => {
     });
 });
 
-const deleteAllUserTables = async () => {
+const deleteAllUserTables = async (mockUser) => {
     await signInMockUser(mockUser);
     const query = new Parse.Query('Table');
     const tables = await query.find();
@@ -40,8 +35,13 @@ const deleteAllUserTables = async () => {
 };
 
 describe('signed it table tests', () => {
+    const mockUser = {
+        email: 'testTables_single@eatbnb.com',
+        managerName: 'Test Tables'
+    };
+
     beforeAll(async () => await signUpMockUser(mockUser));
-    afterEach(deleteAllUserTables);
+    afterEach(async () => await deleteAllUserTables(mockUser));
     afterAll(async () => await cleanMockUser(mockUser));
 
     it('create a table', async () => {
@@ -143,7 +143,6 @@ describe('signed it table tests', () => {
         const tableCreationSagaResult = await testSaga(INITIAL_STATE, tableReducer, createTableStart(0, 0, 1), onCreateTableStart());
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, tableReducer, updateTableStart(-1, 0, 1), onUpdateTableStart());
 
-
         expect(finalState.error).toBeTruthy();
         expect(finalState.tables.length).toEqual(1);
         expect(finalState.tables[0].x).toEqual(0);
@@ -210,12 +209,47 @@ describe('signed it table tests', () => {
     });
 });
 
-//     it('cannot read other user\'s tables', async => {
-//
-//     });
-//     it('cannot modify other user\'s tables', async => {
-//
-//     });
-//     it('cannot delete other user\'s tables', async => {
-//
-//     });
+describe('signed it table tests agains other user', () => {
+    const oneMockUser = {
+        email: 'testTables_1@eatbnb.com',
+        managerName: 'Test Tables'
+    };
+    const otherMockUser = {
+        email: 'testTables_2@eatbnb.com',
+        managerName: 'Test Tables'
+    };
+
+    let otherUserTable;
+    beforeAll(async () => {
+        await signUpMockUser(otherMockUser);
+
+        const table = new Parse.Object('Table');
+        table.set('x', 0);
+        table.set('y', 0);
+        table.set('seats', 1);
+        const result = await table.save();
+        const attrs = result.attributes;
+
+        otherUserTable = {id: result.id, ...attrs}
+
+        await signUpMockUser(oneMockUser);
+    });
+    afterAll(async () =>
+    {
+        await cleanMockUser(oneMockUser);
+        await cleanMockUser(otherMockUser);
+    });
+
+    it('cannot modify other user\'s tables', async () => {
+        const {finalState} = await testSaga(INITIAL_STATE, tableReducer,
+            updateTableStart(otherUserTable, 1, 1, 2), onUpdateTableStart());
+
+        expect(finalState.error).toBeTruthy();
+    });
+    it('cannot delete other user\'s tables', async () => {
+        const {finalState} = await testSaga(INITIAL_STATE, tableReducer,
+            deleteTableStart(otherUserTable), onDeleteTableStart());
+
+        expect(finalState.error).toBeTruthy();
+    });
+});

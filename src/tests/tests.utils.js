@@ -16,7 +16,7 @@ export const testSaga = async (initialState, reducer, startActionData, generator
         finalState = reducer(initialState, action);
     })
 
-    return {actionsDispatched, finalState};
+    return {actionsDispatched, finalState};r
 }
 
 export const mockUserPassword = 'password';

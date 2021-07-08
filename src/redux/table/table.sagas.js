@@ -66,8 +66,20 @@ export function* onDeleteTableStart() {
 
 function* getTables() {
     try {
-        const query = new Parse.Query('Table');
-        const results = yield query.find();
+        let results = [];
+        let skip = 0;
+        const limit = 100;
+        while(true) {
+            const query = new Parse.Query('Table')
+            query.limit(limit);
+            query.skip(skip);
+            const tempResults = yield query.find();
+            results = results.concat(tempResults);
+            if (tempResults.length < limit) {
+                break;
+            }
+            skip += limit;
+        }
         const tables = results.map(r => {
             return {
                 id: r.id,

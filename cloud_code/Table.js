@@ -75,3 +75,25 @@ Parse.Cloud.beforeFind("Table", async (request) => {
         return Parse.Query.and(query, otherQuery);
     }
 });
+
+Parse.Cloud.beforeDelete("Table", async (request) => {
+    const { object: table }  = request;
+    const limit = 100;
+
+    // delete table reservations
+    let results = [];
+    let skip = 0;
+    while(true) {
+        const reservationsQuery = new Parse.Query("Reservation");
+        reservationsQuery.equalTo("table", table);
+        reservationsQuery.limit(limit);
+        reservationsQuery.skip(skip);
+        const reservationsResult = await reservationsQuery.find({useMasterKey: true});
+        results = results.concat(reservationsResult);
+        if (reservationsResult.length < limit) {
+            break;
+        }
+        skip += limit;
+    }
+    Parse.Object.destroyAll(results, {useMasterKey: true});
+});

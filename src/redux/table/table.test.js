@@ -207,9 +207,30 @@ describe('signed it table tests', () => {
         expect(finalState.tables[1].y).toEqual(1);
         expect(finalState.tables[1].seats).toEqual(2);
     });
+    it('get all 150 tables', async () => {
+        const tables = [];
+        for (let i= 0; i< 15; i++) {
+            for (let j= 0; j< 10; j++) {
+                const table = new Parse.Object('Table');
+                table.set('x', i);
+                table.set('y', j);
+                table.set('seats', 1);
+                tables.push(table);
+            }
+        }
+        await Parse.Object.saveAll(tables);
+
+        const logoutSagaResult = await testSaga(INITIAL_STATE, tableReducer, signOutStart(), onSignOutStart());
+        const signInResult = await testSaga(logoutSagaResult.finalState, tableReducer, signInStart(mockUser.email, mockUserPassword), onSignInStart());
+        const {finalState} = await testSaga(signInResult.finalState, tableReducer, signInSuccess(mockUser), onSignInSuccess());
+
+        expect(finalState.error).toBeFalsy();
+        expect(finalState.tables.length).toEqual(150);
+    });
+
 });
 
-describe('signed it table tests agains other user', () => {
+describe('signed it table tests against other user', () => {
     const oneMockUser = {
         email: 'testTables_1@eatbnb.com',
         managerName: 'Test Tables'

@@ -77,7 +77,20 @@ Parse.Cloud.beforeFind("Table", async (request) => {
 });
 
 Parse.Cloud.beforeDelete("Table", async (request) => {
-    const { object: table }  = request;
+    const {object: table} = request;
+
+    if (!request.master) {
+        const user = request.user;
+
+        if (!user) {
+            throw new Parse.Error(200, 'User must be authenticated to delete tables');
+        }
+
+        if (table.get("user").id !== user.id) {
+            throw new Parse.Error(204, 'You don\'t have permission to do that');
+        }
+    }
+
     const limit = 100;
 
     // delete table reservations

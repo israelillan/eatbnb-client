@@ -1,3 +1,7 @@
+export const tableFromBackendObject = (backendObject) => {
+    return {backendObject: backendObject, ...backendObject.attributes};
+}
+
 export const updateTable = (tables, tableToUpdate) => {
     return tables.map(table =>
         table.id === tableToUpdate.id

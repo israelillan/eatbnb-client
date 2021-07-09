@@ -42,7 +42,7 @@ export const deleteTableSuccess = (table) => ({
     payload: table
 });
 
-export const getTableSuccess = (tables) => ({
-    type: TableActionsTypes.GET_TABLE_SUCCESS,
+export const getTablesSuccess = (tables) => ({
+    type: TableActionsTypes.GET_TABLES_SUCCESS,
     payload: tables
 })

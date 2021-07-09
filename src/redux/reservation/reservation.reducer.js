@@ -1,6 +1,7 @@
 import INITIAL_STATE from "./reservation.state";
 import ReservationActionsTypes from "./reservation.actions.types";
-import {removeReservation, updateReservation} from "./reservation.utils";
+import {addReservations, removeReservation, updateReservation} from "./reservation.utils";
+import UserActionTypes from "../user/user.actions.types";
 
 const reservationReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
@@ -8,12 +9,18 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 error: action.payload.error
+            }
+        case UserActionTypes.SIGN_OUT_SUCCESS:
+            return {
+                ...state,
+                error: null,
+                reservations: []
             };
         case ReservationActionsTypes.CREATE_RESERVATION_SUCCESS:
             return {
                 ...state,
                 error: null,
-                reservations: [...state.reservations, action.payload]
+                reservations: []
             };
         case ReservationActionsTypes.UPDATE_RESERVATION_SUCCESS:
             return {
@@ -26,6 +33,12 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 error: null,
                 reservations: removeReservation(state.reservations, action.payload)
+            };
+        case ReservationActionsTypes.GET_RESERVATIONS_SUCCESS:
+            return {
+                ...state,
+                error: null,
+                reservations: action.payload.reservations
             };
         default:
             return state;

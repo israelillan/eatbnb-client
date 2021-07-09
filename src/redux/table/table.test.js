@@ -49,7 +49,7 @@ describe('signed it table tests', () => {
 
         expect(finalState.error).toBeFalsy();
         expect(finalState.tables.length).toEqual(1);
-        expect(finalState.tables[0].id).toBeTruthy();
+        expect(finalState.tables[0].backendObject).toBeTruthy();
         expect(finalState.tables[0].reference).toBeTruthy();
         expect(finalState.tables[0].user.id).toEqual(Parse.User.current().id);
         expect(finalState.tables[0].x).toEqual(0);
@@ -64,7 +64,7 @@ describe('signed it table tests', () => {
 
         expect(finalState.error).toBeFalsy();
         expect(finalState.tables.length).toEqual(1);
-        expect(finalState.tables[0].id).toEqual(tableCreationSagaResult.finalState.tables[0].id);
+        expect(finalState.tables[0].backendObject.id).toEqual(tableCreationSagaResult.finalState.tables[0].backendObject.id);
         expect(finalState.tables[0].reference).toEqual(tableCreationSagaResult.finalState.tables[0].reference);
         expect(finalState.tables[0].user.id).toEqual(Parse.User.current().id);
         expect(finalState.tables[0].x).toEqual(1);
@@ -95,7 +95,7 @@ describe('signed it table tests', () => {
 
         expect(finalState.error).toBeFalsy();
         expect(finalState.tables.length).toEqual(1);
-        expect(finalState.tables[0].id).toBeTruthy();
+        expect(finalState.tables[0].backendObject).toBeTruthy();
         expect(finalState.tables[0].reference).toBeTruthy();
         expect(finalState.tables[0].user.id).toEqual(Parse.User.current().id);
         expect(finalState.tables[0].x).toEqual(0);
@@ -251,7 +251,7 @@ describe('signed it table tests against other user', () => {
         const result = await table.save();
         const attrs = result.attributes;
 
-        otherUserTable = {id: result.id, ...attrs}
+        otherUserTable = {backendObject: result, ...attrs}
 
         await signUpMockUser(oneMockUser);
     });

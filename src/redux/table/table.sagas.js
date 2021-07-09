@@ -5,10 +5,11 @@ import {
     backendError,
     createTableSuccess,
     deleteTableSuccess,
-    getTableSuccess,
+    getTablesSuccess,
     updateTableSuccess
 } from "./table.actions";
 import UserActionTypes from "../user/user.actions.types";
+import {tableFromBackendObject} from "./table.utils";
 
 function* createTable({payload: {x, y, seats}}) {
     try {
@@ -17,8 +18,7 @@ function* createTable({payload: {x, y, seats}}) {
         table.set('y', y);
         table.set('seats', seats);
         const result = yield table.save();
-        const attrs = result.attributes;
-        yield put(createTableSuccess({id: result.id, ...attrs}));
+        yield put(createTableSuccess(tableFromBackendObject(result)));
     } catch (error) {
         yield put(backendError(error));
     }
@@ -30,15 +30,12 @@ export function* onCreateTableStart() {
 
 function* updateTable({payload: {table, x, y, seats}}) {
     try {
-        const query = new Parse.Query('Table');
-        const object = yield query.get(table.id);
-        object.set('x', x);
-        object.set('y', y);
-        object.set('seats', seats);
-        const result = yield object.save();
-        const attrs = result.attributes;
+        table.backendObject.set('x', x);
+        table.backendObject.set('y', y);
+        table.backendObject.set('seats', seats);
+        const result = yield table.backendObject.save();
 
-        yield put(updateTableSuccess({id: result.id, ...attrs}));
+        yield put(updateTableSuccess(tableFromBackendObject(result)));
     } catch (error) {
         yield put(backendError(error));
     }
@@ -50,9 +47,7 @@ export function* onUpdateTableStart() {
 
 function* deleteTable({payload: table}) {
     try {
-        const query = new Parse.Query('Table');
-        const object = yield query.get(table.id);
-        yield object.destroy();
+        yield table.backendObject.destroy();
 
         yield put(deleteTableSuccess(table));
     } catch (error) {
@@ -81,13 +76,10 @@ function* getTables() {
             skip += limit;
         }
         const tables = results.map(r => {
-            return {
-                id: r.id,
-                ...r.attributes
-            }
+            return tableFromBackendObject(r)
         });
 
-        yield put(getTableSuccess(tables));
+        yield put(getTablesSuccess(tables));
     } catch (error) {
         yield put(backendError(error));
     }

@@ -34,7 +34,7 @@ const tableReducer = (state = INITIAL_STATE, action) => {
                 error: null,
                 tables: removeTable(state.tables, action.payload)
             };
-        case TableActionsTypes.GET_TABLE_SUCCESS:
+        case TableActionsTypes.GET_TABLES_SUCCESS:
             return {
                 ...state,
                 tables: action.payload

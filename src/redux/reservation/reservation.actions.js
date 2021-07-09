@@ -15,7 +15,7 @@ export const createReservationSuccess = (reservation) => ({
     payload: reservation
 });
 
-export const updateReservationStart = (reservation, table= undefined, dateAndTime= undefined, customerName= undefined, customerPhone = undefined) => {
+export const updateReservationStart = (reservation, table = undefined, dateAndTime = undefined, customerName = undefined, customerPhone = undefined) => {
     table = table ? table : reservation.table;
     dateAndTime = dateAndTime ? dateAndTime : reservation.dateAndTime;
     customerName = customerName ? customerName : reservation.customerName;
@@ -41,4 +41,16 @@ export const deleteReservationStart = (reservation) => ({
 export const deleteReservationSuccess = (reservation) => ({
     type: ReservationActionsTypes.DELETE_RESERVATION_SUCCESS,
     payload: reservation
+});
+
+export const getReservationsStart = (table, sort = undefined) => ({
+    type: ReservationActionsTypes.GET_RESERVATIONS_START,
+    payload: {
+        table, sort
+    }
+});
+
+export const getReservationsSuccess = (reservations, table, sort) => ({
+    type: ReservationActionsTypes.GET_RESERVATIONS_SUCCESS,
+    payload: {reservations, table, sort}
 });

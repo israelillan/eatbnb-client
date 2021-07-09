@@ -10,7 +10,7 @@ Parse.Cloud.beforeSave("Reservation", async (request) => {
         throw new Parse.Error(301, 'Date and time must be defined');
     }
 
-    dateAndTime.setHours(dateAndTime.getHours() + Math.round(dateAndTime.getMinutes()/60));
+    dateAndTime.setHours(dateAndTime.getHours() + Math.floor(dateAndTime.getMinutes()/60));
     dateAndTime.setMinutes(0, 0, 0);
     request.object.set('dateAndTime', dateAndTime);
 

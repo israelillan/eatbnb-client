@@ -43,14 +43,24 @@ export const deleteReservationSuccess = (reservation) => ({
     payload: reservation
 });
 
-export const getReservationsStart = (table, sort = undefined) => ({
+export const getReservationsStart = (table, sort = undefined, query = undefined) => ({
     type: ReservationActionsTypes.GET_RESERVATIONS_START,
     payload: {
-        table, sort
+        table, sort, query
     }
 });
 
-export const getReservationsSuccess = (reservations, table, sort) => ({
+export const getReservationsSuccess = (reservations, table, sort, query) => ({
     type: ReservationActionsTypes.GET_RESERVATIONS_SUCCESS,
-    payload: {reservations, table, sort}
+    payload: {reservations, table, sort, query}
+});
+
+export const getReservationsReportStart = (date) => ({
+    type: ReservationActionsTypes.GET_RESERVATIONS_REPORT_START,
+    payload: {date}
+})
+
+export const getReservationsReportSuccess = (reservationsReport) => ({
+    type: ReservationActionsTypes.GET_RESERVATIONS_REPORT_SUCCESS,
+    payload: {reservationsReport}
 });

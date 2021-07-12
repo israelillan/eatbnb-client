@@ -2,7 +2,9 @@ const INITIAL_STATE = {
     error: null,
     table: undefined,
     sort: 'dateAndTime',
-    reservations: []
+    query: undefined,
+    reservations: [],
+    reservationsReport: []
 };
 
 export default INITIAL_STATE;

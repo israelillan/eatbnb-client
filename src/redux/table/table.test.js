@@ -29,8 +29,8 @@ const deleteAllUserTables = async (mockUser) => {
     await signInMockUser(mockUser);
     const query = new Parse.Query('Table');
     const tables = await query.find();
-    for (const t in tables) {
-        await tables[t].destroy();
+    for (const table of tables) {
+        await table.destroy();
     }
 };
 

@@ -1,6 +1,6 @@
 import INITIAL_STATE from "./reservation.state";
 import ReservationActionsTypes from "./reservation.actions.types";
-import {addReservations, removeReservation, updateReservation} from "./reservation.utils";
+import {removeReservation, updateReservation} from "./reservation.utils";
 import UserActionTypes from "../user/user.actions.types";
 
 const reservationReducer = (state = INITIAL_STATE, action) => {
@@ -38,8 +38,16 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 error: null,
-                reservations: action.payload.reservations
+                reservations: action.payload.reservations,
+                table: action.payload.table,
+                sort: action.payload.sort,
+                query: action.payload.query
             };
+        case ReservationActionsTypes.GET_RESERVATIONS_REPORT_SUCCESS:
+            return {
+                ...state,
+                reservationsReport: action.payload.reservationsReport
+            }
         default:
             return state;
 

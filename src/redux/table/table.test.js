@@ -13,6 +13,7 @@ import {onCreateTableStart, onDeleteTableStart, onSignInSuccess, onUpdateTableSt
 import tableReducer from "./table.reducer";
 import {signInStart, signInSuccess, signOutStart} from "../user/user.actions";
 import {onSignInStart, onSignOutStart} from "../user/user.sagas";
+import {tableFromBackendObject} from "./table.utils";
 
 describe('logged out table tests', () => {
     beforeEach(signOutMockUser);
@@ -34,7 +35,7 @@ const deleteAllUserTables = async (mockUser) => {
     }
 };
 
-describe('signed it table tests', () => {
+describe('signed in table tests', () => {
     const mockUser = {
         email: 'testTables_single@eatbnb.com',
         managerName: 'Test Tables'
@@ -230,7 +231,7 @@ describe('signed it table tests', () => {
 
 });
 
-describe('signed it table tests against other user', () => {
+describe('signed in table tests against other user', () => {
     const oneMockUser = {
         email: 'testTables_1@eatbnb.com',
         managerName: 'Test Tables'
@@ -249,9 +250,7 @@ describe('signed it table tests against other user', () => {
         table.set('y', 0);
         table.set('seats', 1);
         const result = await table.save();
-        const attrs = result.attributes;
-
-        otherUserTable = {backendObject: result, ...attrs}
+        otherUserTable = tableFromBackendObject(result);
 
         await signUpMockUser(oneMockUser);
     });

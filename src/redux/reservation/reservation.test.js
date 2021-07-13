@@ -18,6 +18,7 @@ import {
 import Parse from "../../backend/parse.utils";
 import {signOutStart} from "../user/user.actions";
 import {onSignOutStart} from "../user/user.sagas";
+import {reservationFromBackendObject} from "./reservation.utils";
 
 const createTable = async (x, y) => {
     const table = new Parse.Object('Table');
@@ -34,7 +35,11 @@ const deleteAllUserReservations = async (mockUser) => {
     const query = new Parse.Query('Reservation');
     const reservations = await query.find();
     for (const reservation of reservations) {
-        await reservation.destroy();
+        try {
+            await reservation.destroy();
+        } catch (e) {
+            console.error(e);
+        }
     }
 };
 
@@ -491,14 +496,80 @@ describe('signed it reservation tests', () => {
     });
 });
 
-describe('signed it reservation tests against other user', () => {
-    it('cannot create reservation for other user\'s reservation', () => {
-        //
+describe('signed in reservation tests against other user', () => {
+    const oneMockUser = {
+        email: 'testReservations_1@eatbnb.com',
+        managerName: 'Test Tables'
+    };
+    const otherMockUser = {
+        email: 'testReservations_2@eatbnb.com',
+        managerName: 'Test Tables'
+    };
+
+    const customerName = "Customer name";
+    const customerPhone = "000000000";
+
+    let otherUserTable
+    let otherUserReservation
+    beforeAll(async () => {
+        await signUpMockUser(otherMockUser);
+
+        otherUserTable = await createTable(0, 0);
+
+        const reservation = new Parse.Object('Reservation');
+        reservation.set('table', otherUserTable.backendObject);
+        reservation.set('dateAndTime', new Date());
+        reservation.set('customerName', customerName);
+        reservation.set('customerPhone', customerPhone);
+        const result = await reservation.save();
+        otherUserReservation = reservationFromBackendObject(result, otherUserTable)
+
+        await signUpMockUser(oneMockUser);
     });
-    it('cannot list reservations for other user\'s reservation', () => {
+    afterAll(async () =>
+    {
+        await cleanMockUser(oneMockUser);
+        await cleanMockUser(otherMockUser);
     });
-    it('cannot modify other user\'s reservations', () => {
+
+    it('cannot create reservation for other user\'s table', async () => {
+        const reservationDate = new Date(2021, 2, 1, 0, 0);
+
+        const {finalState} = await testSaga(INITIAL_STATE, reservationReducer,
+            createReservationStart(otherUserTable, reservationDate, customerName, customerPhone),
+            onCreateReservationStart());
+
+        expect(finalState.error).toBeTruthy();
+        expect(finalState.reservations.length).toEqual(0);
     });
-    it('cannot delete other user\'s reservations', () => {
+    it('cannot list reservations for other user\'s table', async () => {
+        const {finalState} = await testSaga(INITIAL_STATE, reservationReducer,
+            getReservationsStart(otherUserTable), onGetReservationsStart());
+
+        expect(finalState.error).toBeFalsy();
+        expect(finalState.reservations.length).toEqual(0);
+    });
+    it('cannot modify other user\'s reservations', async () => {
+        const finalReservationDate = new Date(2021, 2, 3, 3, 0);
+
+        const {finalState} = await testSaga(INITIAL_STATE,
+            reservationReducer,
+            updateReservationStart(
+                otherUserReservation,
+                otherUserTable,
+                finalReservationDate,
+                customerName + "_final",
+                customerPhone + "_final"),
+            onUpdateReservationStart());
+
+        expect(finalState.error).toBeTruthy();
+    });
+    it('cannot delete other user\'s reservations', async () => {
+        const {finalState} = await testSaga(INITIAL_STATE,
+            reservationReducer,
+            deleteReservationStart(otherUserReservation),
+            onDeleteReservationStart());
+
+        expect(finalState.error).toBeTruthy();
     });
 });

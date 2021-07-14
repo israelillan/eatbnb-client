@@ -1,26 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {lazy, Suspense, useEffect} from 'react';
+import {Redirect, Route, Switch} from 'react-router-dom';
+import {createStructuredSelector} from "reselect";
+import {connect} from "react-redux";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import Spinner from "./components/spinner/spinner.component";
+import {selectCurrentUser} from "./redux/user/user.selectors";
+import GuardedRoute from "./components/guarded-route/guarded-route.component";
 
-export default App;
+import { checkUserSession } from './redux/user/user.actions';
+import Header from "./components/header/header.component";
+
+const HomePage = lazy(() => import('./pages/homepage/homepage.component'));
+const SignUpPage = lazy(() => import('./pages/user/sign-up/sign-up.component'));
+const SignInPage = lazy(() => import('./pages/user/sign-in/sign-in.component'));
+const VerifyEmailPage = lazy(() => import("./pages/user/verify-email/verify-email.component"));
+const RestaurantHomePage = lazy(() => import("./pages/restaurant/restaurant-homepage/restaurant-homepage.component"));
+const RestaurantNamePage = lazy(() => import("./pages/restaurant/restaurant-name/restaurant-name.component"));
+
+const App = ({checkUserSession, currentUser}) => {
+    useEffect(() => {
+        checkUserSession();
+    }, [checkUserSession]);
+
+    return (
+        <div>
+            <Header />
+            <Switch>
+                <Suspense fallback={<Spinner/>}>
+                    <Route exact path='/' render={() =>
+                        currentUser ? <Redirect to='/restaurant'/> : <HomePage/>
+                    }/>
+                    <Route exact path='/sign-up' render={() =>
+                        currentUser ? <Redirect to='/restaurant'/> : <SignUpPage/>
+                    }/>
+                    <Route exact path='/sign-in' render={() =>
+                        currentUser ? <Redirect to='/restaurant'/> : <SignInPage/>
+                    }/>
+                    <Route exact path='/restaurant/v' render={() => {
+                        return !currentUser ? <span>NO CURRENT USER</span> : <VerifyEmailPage/>;
+                    }}/>
+                    <Route exact path='/restaurant/verifyEmail' render={() =>
+                        !currentUser ? <Redirect to='/'/> :
+                            (currentUser.emailVerified ?
+                                <Redirect to='/restaurant/'/> :
+                                <VerifyEmailPage/>)
+                    }/>
+                    <Route exact path='/restaurant/restaurantName' render={() =>
+                        !currentUser ? <Redirect to='/'/> : currentUser.restaurantName ? <Redirect to='/restaurant/'/> :
+                            <RestaurantNamePage/>
+                    }/>
+                    <GuardedRoute exact path='/restaurant' component={RestaurantHomePage} currentUser={currentUser}/>
+                </Suspense>
+            </Switch>
+        </div>
+    );
+};
+
+export default connect(
+    createStructuredSelector({
+        currentUser: selectCurrentUser
+    }),
+    dispatch => ({checkUserSession: () => dispatch(checkUserSession())})
+)(App);

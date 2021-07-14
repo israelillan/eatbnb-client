@@ -140,7 +140,7 @@ export function* onGetReservationsReportStart() {
     yield takeLatest(ReservationActionsTypes.GET_RESERVATIONS_REPORT_START, queryReservationsReport);
 }
 
-export function* tableSagas() {
+export function* reservationSagas() {
     yield all([
         onCreateReservationStart(),
         onUpdateReservationStart(),

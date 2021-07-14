@@ -1,5 +1,9 @@
 import UserActionTypes from "./user.actions.types";
 
+export const checkUserSession = () => ({
+    type: UserActionTypes.CHECK_USER_SESSION
+});
+
 export const signUpStart = (email, password, managerName) => ({
     type: UserActionTypes.SIGN_UP_START,
     payload: {email, password, managerName}

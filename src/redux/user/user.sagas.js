@@ -2,13 +2,30 @@ import {all, call, put, takeLatest} from 'redux-saga/effects';
 import UserActionTypes from "./user.actions.types";
 import {
     backendError,
-    setRestaurantNameStart,
     setRestaurantNameSuccess,
     signInOrUpFailure,
     signInSuccess,
     signOutSuccess
 } from "./user.actions";
 import Parse from "../../backend/parse.utils";
+import {userFromBackendObject} from "./user.utils";
+
+function* isUserAuthenticated() {
+    try {
+        const user = Parse.User.current();
+        if (user) {
+            const query = new Parse.Query(Parse.User);
+            const currentUser = yield query.get(user.id);
+            yield put(signInSuccess(userFromBackendObject(currentUser)));
+        }
+    } catch (error) {
+        yield put(signInOrUpFailure(error));
+    }
+}
+
+export function* onCheckUserSession() {
+    yield takeLatest(UserActionTypes.CHECK_USER_SESSION, isUserAuthenticated);
+}
 
 function* signUp({payload: {email, password, managerName}}) {
     const user = new Parse.User();
@@ -20,8 +37,7 @@ function* signUp({payload: {email, password, managerName}}) {
     try {
         yield user.signUp();
         const currentUser = Parse.User.current();
-        const attrs = currentUser.attributes;
-        yield put(signInSuccess({id: currentUser.id, ...attrs}));
+        yield put(signInSuccess(userFromBackendObject(currentUser)));
     } catch (error) {
         yield put(signInOrUpFailure(error));
     }
@@ -75,6 +91,7 @@ export function* onSetRestaurantNameStart() {
 
 export function* userSagas() {
     yield all([
+        call(onCheckUserSession),
         call(onSignUpStart),
         call(onSignInStart),
         call(onSignOutStart),

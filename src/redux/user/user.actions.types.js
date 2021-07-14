@@ -1,4 +1,6 @@
 const UserActionTypes = {
+    CHECK_USER_SESSION: 'CHECK_USER_SESSION',
+
     SIGN_UP_START: 'SIGN_UP_START',
     SIGN_IN_START: 'SIGN_IN_START',
 

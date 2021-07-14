@@ -6,11 +6,7 @@ import {connect} from "react-redux";
 import {setRestaurantNameStart} from "../../../redux/user/user.actions";
 
 const RestaurantNamePage = ({setRestaurantNameStart}) => {
-    const [getRestaurantName, setRestaurantName] = useState({
-        restaurantName: ''
-    });
-
-    const {restaurantName} = getRestaurantName;
+    const [restaurantName, setRestaurantName] = useState('');
 
     const handleSubmit = async event => {
         event.preventDefault();
@@ -21,7 +17,7 @@ const RestaurantNamePage = ({setRestaurantNameStart}) => {
     const handleChange = event => {
         const {value} = event.target;
 
-        setRestaurantName({restaurantName: value});
+        setRestaurantName(value);
     };
 
     return (

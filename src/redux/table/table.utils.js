@@ -4,11 +4,11 @@ export const tableFromBackendObject = (backendObject) => {
 
 export const updateTable = (tables, tableToUpdate) => {
     return tables.map(table =>
-        table.id === tableToUpdate.id
+        table.backendObject.id === tableToUpdate.backendObject.id
             ? tableToUpdate
             : table
     );
 };
 export const removeTable = (tables, tableToRemove) => {
-    return tables.filter(table => table.id !== tableToRemove.id);
+    return tables.filter(table => table.backendObject.id !== tableToRemove.backendObject.id);
 };

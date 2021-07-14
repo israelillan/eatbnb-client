@@ -9,6 +9,7 @@ import GuardedRoute from "./components/guarded-route/guarded-route.component";
 
 import { checkUserSession } from './redux/user/user.actions';
 import Header from "./components/header/header.component";
+import TablesLayoutEditorPage from "./pages/restaurant/tables-layout-editor/tables-layout-editor.component";
 
 const HomePage = lazy(() => import('./pages/homepage/homepage.component'));
 const SignUpPage = lazy(() => import('./pages/user/sign-up/sign-up.component'));
@@ -50,6 +51,7 @@ const App = ({checkUserSession, currentUser}) => {
                             <RestaurantNamePage/>
                     }/>
                     <GuardedRoute exact path='/restaurant' component={RestaurantHomePage} currentUser={currentUser}/>
+                    <GuardedRoute exact path='/restaurant/tablesLayout' component={TablesLayoutEditorPage} currentUser={currentUser}/>
                 </Suspense>
             </Switch>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
+import {RestaurantContainer} from "./restaurant-homepage.styles";
 
-const RestaurantHomePage = () => (<div>Restaurant</div>);
+const RestaurantHomePage = () => (<RestaurantContainer>Restaurant</RestaurantContainer>);
 
 export default RestaurantHomePage;

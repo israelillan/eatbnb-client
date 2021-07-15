@@ -1,23 +1,29 @@
 import React, {useState} from 'react';
 import {connect} from "react-redux";
 import {createStructuredSelector} from "reselect";
+import {DndProvider} from "react-dnd";
 
-import {Table, TableBody, TableRow, TablesLayoutEditorContainer} from "./tables-layout-editor.styles";
+import {Table, TableContainer, TablesLayoutEditorContainer} from "./tables-layout-editor.styles";
+
 import {createTableStart, deleteTableStart, updateTableStart} from "../../../redux/table/table.actions";
 import {selectTables} from "../../../redux/table/table.selectors";
-import LayoutCell from "../../../components/LayoutCell/layout-cell.component";
 import {Button, Modal} from "react-bootstrap";
 import {Link} from "react-router-dom";
+import {HTML5Backend} from "react-dnd-html5-backend";
+import DraggableLayoutTable from "../../../components/DraggableLayoutTable/draggable-layout-table.component";
+import TableLayoutCell from "../../../components/table-layout-cell/table-layout-cell.component";
 
 const TablesLayoutEditorPage = ({layout, createTable, updateTable, deleteTable}) => {
     const [openCreate, setOpenCreate] = useState(false);
     const [selectedCell, setSelectedCell] = useState(null);
     const [tableSeats, setTableSeats] = useState(4);
-    const cellClicked = (x, y, table) => {
-        setSelectedCell({x, y, table});
-        if (table) {
-            setTableSeats(table.seats);
-        }
+    const cellClicked = (x, y) => {
+        setSelectedCell({x, y, table: null});
+        setOpenCreate(true);
+    };
+    const tableClicked = (table) => {
+        setSelectedCell({x: table.x, y: table.y, table});
+        setTableSeats(table.seats);
         setOpenCreate(true);
     };
     const createOrUpdateCell = () => {
@@ -42,32 +48,47 @@ const TablesLayoutEditorPage = ({layout, createTable, updateTable, deleteTable})
         setOpenCreate(false);
     };
 
-    const rows = [];
-    const layoutMap = layout.reduce((a,table) => ({...a, [`${table.x},${table.y}`]: table}), {})
+    const tableDropped = (x, y, table) => {
+        updateTable(table, x, y, table.seats);
+    };
 
-    for (let i = 0; i < 15; i++) {
-        const cols = [];
-        for (let j = 0; j < 10; j++) {
+    const layoutMap = layout.reduce((a, table) => ({...a, [`${table.x},${table.y}`]: table}), {})
+
+    const cells = [];
+    const MAX_COLS = 15;
+    const MAX_ROWS = 10;
+    for (let j = 0; j < MAX_ROWS; j++) {
+        for (let i = 0; i < MAX_COLS; i++) {
             const index = `${i},${j}`;
             const table = index in layoutMap ? layoutMap[index] : null;
-            cols.push(<LayoutCell key={i * 100 + j} x={i} y={j} table={table} onClick={cellClicked}/>);
+            cells.push(
+                <TableLayoutCell x={i} y={j} key={i * MAX_ROWS + j} rows={MAX_ROWS} cols={MAX_COLS} table={table}
+                                 onTableDropped={(x, y, table) => tableDropped(x, y, table)}
+                                 onCellClicked={table ? null : cellClicked}>
+                    {table
+                        ? <DraggableLayoutTable x={i} y={j} table={table}
+                                                onTableClick={tableClicked}/>
+                        : null}
+                </TableLayoutCell>
+            );
         }
-        rows.push(<TableRow key={i * 100 + 99}>{cols}</TableRow>);
     }
 
     return (
         <TablesLayoutEditorContainer>
             <span>Set up your restaurant tables layout</span>
-            <Table>
-                <TableBody>
-                    {rows}
-                </TableBody>
-            </Table>
+            <DndProvider backend={HTML5Backend}>
+                <TableContainer aspect={MAX_COLS / MAX_ROWS}>
+                    <Table>
+                        {cells}
+                    </Table>
+                </TableContainer>
+            </DndProvider>
             <Modal show={openCreate} onHide={closeModal} backdrop='static' keyboard='false' centered>
                 <Modal.Body>
                     <h4>Enter number of seats</h4>
                     <input type='number' min='1' step='1'
-                           onChange={event => setTableSeats(Math.max(1, event.target.value))} value={tableSeats} />
+                           onChange={event => setTableSeats(Math.max(1, event.target.value))} value={tableSeats}/>
                 </Modal.Body>
                 <Modal.Footer>
                     {selectedCell?.table ? <Button onClick={deleteCell}>Delete</Button> : null}

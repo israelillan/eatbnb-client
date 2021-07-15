@@ -15,10 +15,7 @@ export const createTableSuccess = (table) => ({
     payload: table
 });
 
-export const updateTableStart = (table, x = undefined, y = undefined, seats = undefined) => {
-    x = x ? x : table.x;
-    y = y ? y : table.y;
-    seats = seats ? seats : table.seats;
+export const updateTableStart = (table, x, y, seats) => {
     return {
         type: TableActionsTypes.UPDATE_TABLE_START,
         payload: {

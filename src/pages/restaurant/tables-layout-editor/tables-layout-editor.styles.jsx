@@ -1,18 +1,22 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 
 export const TablesLayoutEditorContainer = styled.div`
 `;
 
+const getTableContainerStyle = ({aspect}) => (
+    css`
+      width: 800px;
+      height: ${800 / aspect}px;
+    `
+);
+
+export const TableContainer = styled.div`
+  ${getTableContainerStyle}
+`;
+
 export const Table = styled.div`
-  display: table;
   width: 100%;
-`;
-
-export const TableRow = styled.div`
-  display: table-row;
-  height: 30px;
-`;
-
-export const TableBody = styled.div`
-    display: table-row-group;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
 `;

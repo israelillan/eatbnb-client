@@ -29,7 +29,7 @@ function* createReservation({payload: {table, dateAndTime, customerName, custome
 }
 
 export function* onCreateReservationStart() {
-    yield takeLatest(ReservationActionsTypes.UPDATE_RESERVATION_START, createReservation);
+    yield takeLatest(ReservationActionsTypes.CREATE_RESERVATION_START, createReservation);
 }
 
 function* updateReservation({payload: {reservation, table, dateAndTime, customerName, customerPhone}}) {

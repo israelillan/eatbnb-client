@@ -13,7 +13,7 @@ const getOverStyle = ({isOver}) => (
     `
 );
 
-export const TableCellContainer = styled.div`
+export const TablesCellContainer = styled.div`
   border: 1px solid #ffffff;
   padding: 3px;
   ${getCellStyle}

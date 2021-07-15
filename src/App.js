@@ -17,6 +17,7 @@ const SignInPage = lazy(() => import('./pages/user/sign-in/sign-in.component'));
 const VerifyEmailPage = lazy(() => import("./pages/user/verify-email/verify-email.component"));
 const RestaurantHomePage = lazy(() => import("./pages/restaurant/restaurant-homepage/restaurant-homepage.component"));
 const RestaurantNamePage = lazy(() => import("./pages/restaurant/restaurant-name/restaurant-name.component"));
+const ReservationsPage = lazy(() => import("./pages/restaurant/reservations/reservations.component"));
 
 const App = ({checkUserSession, currentUser}) => {
     useEffect(() => {
@@ -52,6 +53,7 @@ const App = ({checkUserSession, currentUser}) => {
                     }/>
                     <GuardedRoute exact path='/restaurant' component={RestaurantHomePage} currentUser={currentUser}/>
                     <GuardedRoute exact path='/restaurant/tablesLayout' component={TablesLayoutEditorPage} currentUser={currentUser}/>
+                    <GuardedRoute exact path='/restaurant/reservations' component={ReservationsPage} currentUser={currentUser}/>
                 </Suspense>
             </Switch>
         </div>

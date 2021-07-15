@@ -1,10 +1,10 @@
 import React from 'react'
 import {useDrag} from 'react-dnd'
-import {DraggableLayoutTableContainer, ReferenceContainer, SeatsContainer} from "./draggable-layout-table.styles";
+import {TablesLayoutTableContainer, ReferenceContainer, SeatsContainer} from "./tables-layout-table.styles";
 
 export const TABLE_DRAG_TYPE = 'LayoutTable';
 
-const DraggableLayoutTable = ({table, onTableClick}) => {
+const TablesLayoutTable = ({table, onTableClick}) => {
     const [{isDragging}, drag] = useDrag(() => ({
         type: TABLE_DRAG_TYPE,
         item: () => {
@@ -16,11 +16,11 @@ const DraggableLayoutTable = ({table, onTableClick}) => {
     }));
 
     return (
-        <DraggableLayoutTableContainer ref={drag} isDraggin={isDragging} table={table} onClick={() => onTableClick(table)}>
+        <TablesLayoutTableContainer ref={drag} isDraggin={isDragging} table={table} onClick={() => onTableClick(table)}>
             <ReferenceContainer>{`#${table.reference}`}</ReferenceContainer>
             <SeatsContainer>{`[${table.seats}]`}</SeatsContainer>
-        </DraggableLayoutTableContainer>
+        </TablesLayoutTableContainer>
     );
 }
 
-export default DraggableLayoutTable;
+export default TablesLayoutTable;

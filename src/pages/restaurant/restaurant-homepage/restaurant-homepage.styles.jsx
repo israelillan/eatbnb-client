@@ -1,4 +1,4 @@
 import styled from 'styled-components';
 
-export const RestaurantContainer = styled.div`
+export const RestaurantPageContainer = styled.div`
 `;

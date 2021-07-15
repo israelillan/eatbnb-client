@@ -7,7 +7,7 @@ const getDragStyle = ({isDragging}) => (
     `
 )
 
-export const DraggableLayoutTableContainer = styled.div`
+export const TablesLayoutTableContainer = styled.div`
   background: #4343b8;
   width: 100%;
   height: 100%;

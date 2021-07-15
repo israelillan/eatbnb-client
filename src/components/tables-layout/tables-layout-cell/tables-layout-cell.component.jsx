@@ -7,7 +7,9 @@ const TablesLayoutCell = ({x, y, cols, rows, table, onTableDropped, onCellClicke
     const [{ isOver }, drop] = useDrop(() => ({
         accept: TABLE_DRAG_TYPE,
         drop: (item) => {
-            onTableDropped(x, y, item);
+            if (onTableDropped) {
+                onTableDropped(x, y, item);
+            }
         },
         canDrop: () => !table,
         collect: monitor => ({

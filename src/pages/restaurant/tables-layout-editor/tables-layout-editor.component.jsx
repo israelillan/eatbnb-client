@@ -1,30 +1,26 @@
 import React, {useState} from 'react';
 import {connect} from "react-redux";
-import {DndProvider} from "react-dnd";
 
 import {TablesLayoutEditorContainer} from "./tables-layout-editor.styles";
 
 import {createTableStart, deleteTableStart, updateTableStart} from "../../../redux/table/table.actions";
 import {Button, Modal} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import {HTML5Backend} from "react-dnd-html5-backend";
 import TablesLayout from "../../../components/tables-layout/tables-layout/tables-layout.component";
 
 const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispatchDeleteTable}) => {
-    const [openCreate, setOpenCreate] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
     const [selectedCell, setSelectedCell] = useState(null);
     const [tableSeats, setTableSeats] = useState(4)
 
     const cellClicked = (x, y) => {
-        console.log('cell clicked');
         setSelectedCell({x, y, table: null});
-        setOpenCreate(true);
+        setOpenModal(true);
     };
     const tableClicked = (table) => {
-        console.log('table clicked');
         setSelectedCell({x: table.x, y: table.y, table});
         setTableSeats(table.seats);
-        setOpenCreate(true);
+        setOpenModal(true);
     };
     const createOrUpdateCell = () => {
         if (selectedCell) {
@@ -45,7 +41,7 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
         closeModal();
     };
     const closeModal = () => {
-        setOpenCreate(false);
+        setOpenModal(false);
     };
     const tableDropped = (x, y, table) => {
         dispatchUpdateTable(table, x, y, table.seats);
@@ -55,10 +51,8 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
     return (
         <TablesLayoutEditorContainer>
             <span>Set up your restaurant tables layout</span>
-            <DndProvider backend={HTML5Backend}>
                 <TablesLayout onCellClicked={cellClicked} onTableClicked={tableClicked} onTableDropped={tableDropped} />
-            </DndProvider>
-            <Modal show={openCreate} onHide={closeModal} backdrop='static' keyboard='false' centered>
+            <Modal show={openModal} onHide={closeModal} backdrop='static' keyboard='false' centered>
                 <Modal.Body>
                     <h4>Enter number of seats</h4>
                     <input type='number' min='1' step='1'

@@ -4,7 +4,7 @@ import {TablesLayoutTableContainer, ReferenceContainer, SeatsContainer} from "./
 
 export const TABLE_DRAG_TYPE = 'LayoutTable';
 
-const TablesLayoutTable = ({table, onTableClick}) => {
+const TablesLayoutTable = ({table, onTableClick, allowDragging}) => {
     const [{isDragging}, drag] = useDrag(() => ({
         type: TABLE_DRAG_TYPE,
         item: () => {
@@ -16,7 +16,7 @@ const TablesLayoutTable = ({table, onTableClick}) => {
     }));
 
     return (
-        <TablesLayoutTableContainer ref={drag} isDraggin={isDragging} table={table} onClick={() => onTableClick(table)}>
+        <TablesLayoutTableContainer ref={allowDragging ? drag : null} allowDragging={allowDragging} isDraggin={isDragging} table={table} onClick={() => onTableClick(table)}>
             <ReferenceContainer>{`#${table.reference}`}</ReferenceContainer>
             <SeatsContainer>{`[${table.seats}]`}</SeatsContainer>
         </TablesLayoutTableContainer>

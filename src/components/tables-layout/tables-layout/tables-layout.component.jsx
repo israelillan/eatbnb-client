@@ -1,9 +1,12 @@
 import React from 'react';
+import {HTML5Backend} from "react-dnd-html5-backend";
+import {DndProvider} from "react-dnd";
+import {connect} from "react-redux";
+import {createStructuredSelector} from "reselect";
+
 import {Table, TablesLayoutContainer} from "./tables-layout.styles";
 import TablesLayoutCell from "../tables-layout-cell/tables-layout-cell.component";
 import TablesLayoutTable from "../tables-layout-table/tables-layout-table.component";
-import {connect} from "react-redux";
-import {createStructuredSelector} from "reselect";
 import {selectTables} from "../../../redux/table/table.selectors";
 
 const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) => {
@@ -20,9 +23,10 @@ const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) =
             cells.push(
                 <TablesLayoutCell x={i} y={j} key={i * MAX_ROWS + j} rows={MAX_ROWS} cols={MAX_COLS} table={table}
                                   onTableDropped={onTableDropped}
-                                  onCellClicked={table? null : onCellClicked}>
+                                  onCellClicked={table ? null : onCellClicked}>
                     {table
                         ? <TablesLayoutTable x={i} y={j} table={table}
+                                             allowDragging={!!onTableDropped}
                                              onTableClick={onTableClicked}/>
                         : null}
                 </TablesLayoutCell>
@@ -31,9 +35,11 @@ const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) =
     }
 
     return <TablesLayoutContainer aspect={MAX_COLS / MAX_ROWS}>
-        <Table>
-            {cells}
-        </Table>
+        <DndProvider backend={HTML5Backend}>
+            <Table>
+                {cells}
+            </Table>
+        </DndProvider>
     </TablesLayoutContainer>;
 }
 

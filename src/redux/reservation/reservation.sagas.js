@@ -9,8 +9,8 @@ import {
     updateReservationSuccess
 } from "./reservation.actions";
 import {reservationFromBackendObject} from "./reservation.utils";
-import {getQuery, getReservations, getSort, getTable} from "./reservation.selectors";
-import {getTables} from "../table/table.selectors";
+import {selectQuery, selectReservations, selectSort, selectTable} from "./reservation.selectors";
+import {selectTables} from "../table/table.selectors";
 import {tableFromBackendObject} from "../table/table.utils";
 
 function* createReservation({payload: {table, dateAndTime, customerName, customerPhone}}) {
@@ -64,16 +64,16 @@ export function* onDeleteReservationStart() {
 
 function* queryReservations({payload: {table, sort, query: reservationsQuery}}) {
     try {
-        const currentSort = yield select(getSort);
-        const currentQuery = yield select(getQuery);
-        let currentTable = yield select(getTable);
+        const currentSort = yield select(selectSort);
+        const currentQuery = yield select(selectQuery);
+        let currentTable = yield select(selectTable);
 
         sort = sort ?? currentSort;
         currentTable = currentTable ?? table;
 
         let currentReservations = [];
         if (currentSort === sort && currentTable === table && currentQuery === reservationsQuery) {
-            currentReservations = yield select(getReservations);
+            currentReservations = yield select(selectReservations);
         }
 
         const query = new Parse.Query('Reservation');
@@ -111,15 +111,6 @@ function* queryReservationsReport({payload: {date}}) {
 
         const tableQuery = new Parse.Query('Table');
 
-        let tablesArray = (yield select(getTables));
-        if (!tablesArray) {
-            const queriedTables = yield tableQuery.find();
-            tablesArray = queriedTables.map(t => {
-                return tableFromBackendObject(t);
-            });
-        }
-        const tables = tablesArray.reduce((a,x) => ({...a, [x.backendObject.id]: x}), {})
-
         const query = new Parse.Query('Reservation');
         query.greaterThanOrEqualTo('dateAndTime', today);
         query.lessThan('dateAndTime', tomorrow);
@@ -127,8 +118,19 @@ function* queryReservationsReport({payload: {date}}) {
 
         const results = yield query.find();
         const reservationsReport = [];
+
+        let tables = (yield select(selectTables)).reduce((a,x) => ({...a, [x.backendObject.id]: x}), {})
+
         for (const result of results) {
-            reservationsReport.push(reservationFromBackendObject(result, tables[result.get('table').id]));
+            const tableId = result.get('table').id;
+            if (!(tableId in tables)) {
+                const queriedTables = yield tableQuery.find();
+                const tablesArray = queriedTables.map(t => {
+                    return tableFromBackendObject(t);
+                });
+                tables = tablesArray.reduce((a,x) => ({...a, [x.backendObject.id]: x}), {})
+            }
+            reservationsReport.push(reservationFromBackendObject(result, tables[tableId]));
         }
         yield put(getReservationsReportSuccess(reservationsReport));
     } catch (error) {

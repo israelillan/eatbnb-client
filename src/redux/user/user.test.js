@@ -4,12 +4,13 @@ import {setRestaurantNameStart, signInStart, signInSuccess, signOutStart, signUp
 import {onSetRestaurantNameStart, onSignInStart, onSignOutStart, onSignUpStart} from "./user.sagas";
 import {
     cleanMockUser,
-    mockUserPassword, signInMockUser,
+    mockUserPassword,
+    signInMockUser,
     signOutMockUser,
     signUpMockUser,
     testSaga
 } from "../../tests/tests.utils";
-import userReducer from "./user.reducer";
+import rootReducer from '../root-reducer';
 
 describe('sign up user tests', () => {
     const mockUser = {
@@ -22,15 +23,15 @@ describe('sign up user tests', () => {
     afterAll(async () => await cleanMockUser(mockUser));
 
     it('sign up saga', async () => {
-        const {finalState} = await testSaga(INITIAL_STATE, userReducer, signUpStart(mockUser.email, mockUserPassword, mockUser.managerName), onSignUpStart());
+        const {finalState} = await testSaga({user: INITIAL_STATE}, signUpStart(mockUser.email, mockUserPassword, mockUser.managerName), onSignUpStart());
 
         expect(Parse.User.current()).toBeTruthy();
-        expect(finalState.error).toBeFalsy();
-        expect(finalState.currentUser.id).toBeTruthy();
-        expect(finalState.currentUser.email).toEqual(mockUser.email);
-        expect(finalState.currentUser.managerName).toEqual(mockUser.managerName);
-        expect(finalState.currentUser.restaurantName).toBeFalsy();
-        expect(finalState.currentUser.emailVerified).toBeFalsy();
+        expect(finalState.user.error).toBeFalsy();
+        expect(finalState.user.currentUser.backendObject.id).toBeTruthy();
+        expect(finalState.user.currentUser.email).toEqual(mockUser.email);
+        expect(finalState.user.currentUser.managerName).toEqual(mockUser.managerName);
+        expect(finalState.user.currentUser.restaurantName).toBeFalsy();
+        expect(finalState.user.currentUser.emailVerified).toBeFalsy();
     });
 });
 
@@ -45,19 +46,19 @@ describe('logged out user tests', () => {
     beforeEach(signOutMockUser);
 
     it('sign in saga', async () => {
-        const {finalState} = await testSaga(INITIAL_STATE, userReducer, signInStart(mockUser.email, mockUserPassword), onSignInStart());
+        const {finalState} = await testSaga({ user: INITIAL_STATE}, signInStart(mockUser.email, mockUserPassword), onSignInStart());
 
         expect(Parse.User.current()).toBeTruthy();
-        expect(finalState.error).toBeFalsy();
-        expect(finalState.currentUser.id).toBeTruthy();
-        expect(finalState.currentUser.email).toEqual(mockUser.email);
-        expect(finalState.currentUser.managerName).toEqual(mockUser.managerName);
+        expect(finalState.user.error).toBeFalsy();
+        expect(finalState.user.currentUser.backendObject.id).toBeTruthy();
+        expect(finalState.user.currentUser.email).toEqual(mockUser.email);
+        expect(finalState.user.currentUser.managerName).toEqual(mockUser.managerName);
     });
     it('invalid sign in saga', async () => {
-        const {finalState} = await testSaga(INITIAL_STATE, userReducer, signInStart(mockUser.email, 'wrong password'), onSignInStart());
+        const {finalState} = await testSaga({ user: INITIAL_STATE}, signInStart(mockUser.email, 'wrong password'), onSignInStart());
 
         expect(Parse.User.current()).toBeFalsy();
-        expect(finalState.error).toBeTruthy();
+        expect(finalState.user.error).toBeTruthy();
     });
 });
 
@@ -73,20 +74,21 @@ describe('logged in user tests', () => {
     afterEach(signOutMockUser);
 
     it('sign out saga', async () => {
-        const {finalState} = await testSaga(userReducer(INITIAL_STATE, signInSuccess(mockUser)), userReducer, signOutStart(), onSignOutStart());
+        const {finalState} = await testSaga(rootReducer({ user: INITIAL_STATE}, signInSuccess(mockUser)),
+            signOutStart(), onSignOutStart());
 
         expect(Parse.User.current()).toBeFalsy();
-        expect(finalState.error).toBeFalsy();
-        expect(finalState.currentUser).toBeFalsy();
+        expect(finalState.user.error).toBeFalsy();
+        expect(finalState.user.currentUser).toBeFalsy();
     });
     it('set restaurant name', async () => {
-        const {finalState} = await testSaga(userReducer(INITIAL_STATE, signInSuccess(mockUser)), userReducer,
+        const {finalState} = await testSaga(rootReducer({ user: INITIAL_STATE}, signInSuccess(mockUser)),
             setRestaurantNameStart('Test Restaurant'), onSetRestaurantNameStart());
 
         expect(Parse.User.current()).toBeTruthy();
-        expect(finalState.error).toBeFalsy();
-        expect(finalState.currentUser.email).toEqual(mockUser.email);
-        expect(finalState.currentUser.managerName).toEqual(mockUser.managerName);
-        expect(finalState.currentUser.restaurantName).toEqual('Test Restaurant');
+        expect(finalState.user.error).toBeFalsy();
+        expect(finalState.user.currentUser.email).toEqual(mockUser.email);
+        expect(finalState.user.currentUser.managerName).toEqual(mockUser.managerName);
+        expect(finalState.user.currentUser.restaurantName).toEqual('Test Restaurant');
     });
 });

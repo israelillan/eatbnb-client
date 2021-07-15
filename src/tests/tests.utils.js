@@ -1,7 +1,8 @@
 import {runSaga} from "redux-saga";
 import Parse from "../backend/parse.utils";
+import rootReducer from "../redux/root-reducer"
 
-export const testSaga = async (initialState, reducer, startActionData, generator) => {
+export const testSaga = async (initialState, startActionData, generator) => {
     const generatorReturn = generator.next().value;
     const actionsDispatched = [];
     await runSaga({
@@ -13,10 +14,10 @@ export const testSaga = async (initialState, reducer, startActionData, generator
 
     let finalState = initialState;
     actionsDispatched.forEach(action => {
-        finalState = reducer(initialState, action);
+        finalState = rootReducer(initialState, action);
     })
 
-    return {actionsDispatched, finalState};r
+    return {actionsDispatched, finalState};
 }
 
 export const mockUserPassword = 'password';

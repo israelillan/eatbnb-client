@@ -64,8 +64,7 @@ function* signIn({payload: {email, password}}) {
     try {
         yield Parse.User.logIn(email, password);
         const currentUser = Parse.User.current();
-        const attrs = currentUser.attributes
-        yield put(signInSuccess({id: currentUser.id, ...attrs}));
+        yield put(signInSuccess(userFromBackendObject(currentUser)));
     } catch (error) {
         yield put(signInOrUpFailure(error));
     }

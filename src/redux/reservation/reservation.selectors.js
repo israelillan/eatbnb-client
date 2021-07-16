@@ -16,3 +16,7 @@ export const selectQuery = createSelector(
     [state=> state.reservation],
     (state) => state.query
 );
+export const selectThereAreMoreReservations = createSelector(
+    [state=> state.reservation],
+    (state) => state.thereAreMoreReservations
+);

@@ -14,13 +14,15 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 error: null,
-                reservations: []
+                reservations: [],
+                thereAreMoreReservations: true
             };
         case ReservationActionsTypes.CREATE_RESERVATION_SUCCESS:
             return {
                 ...state,
                 error: null,
-                reservations: []
+                reservations: [],
+                thereAreMoreReservations: true
             };
         case ReservationActionsTypes.UPDATE_RESERVATION_SUCCESS:
             return {
@@ -41,7 +43,8 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
                 reservations: action.payload.reservations,
                 table: action.payload.table,
                 sort: action.payload.sort,
-                query: action.payload.query
+                query: action.payload.query,
+                thereAreMoreReservations: action.payload.thereAreMoreReservations
             };
         case ReservationActionsTypes.GET_RESERVATIONS_REPORT_SUCCESS:
             return {

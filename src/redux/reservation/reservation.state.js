@@ -4,6 +4,7 @@ const INITIAL_STATE = {
     sort: 'dateAndTime',
     query: undefined,
     reservations: [],
+    thereAreMoreReservations: true,
     reservationsReport: []
 };
 

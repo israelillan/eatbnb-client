@@ -92,7 +92,7 @@ function* queryReservations({payload: {table, sort, query: reservationsQuery}}) 
         const reservations = results.map(r => {
             return reservationFromBackendObject(r, table)
         });
-        yield put(getReservationsSuccess(currentReservations.concat(reservations), table, sort, reservationsQuery));
+        yield put(getReservationsSuccess(currentReservations.concat(reservations), table, sort, reservationsQuery, results.length > 0));
     } catch (error) {
         yield put(backendError(error));
     }

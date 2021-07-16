@@ -18,6 +18,7 @@ const ReservationsPage = ({dispatchGetReservations}) => {
 
     return <ReservationsPageContainer>
         <span>Check reservations per table</span>
+        <br />
         <Link to='/restaurant/'>Back</Link>
         <TablesLayout onTableClicked={tableClicked}/>
         <br/>

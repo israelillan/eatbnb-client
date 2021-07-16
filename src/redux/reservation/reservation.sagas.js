@@ -65,12 +65,12 @@ export function* onDeleteReservationStart() {
 function* queryReservations({payload: {table, sort, query: reservationsQuery}}) {
     try {
         const currentSort = yield select(selectSort);
-        const currentQuery = yield select(selectQuery);
         let currentTable = yield select(selectTable);
 
         sort = sort ?? currentSort;
         currentTable = currentTable ?? table;
 
+        const currentQuery = yield select(selectQuery);
         let currentReservations = [];
         if (currentSort === sort && currentTable === table && currentQuery === reservationsQuery) {
             currentReservations = yield select(selectReservations);

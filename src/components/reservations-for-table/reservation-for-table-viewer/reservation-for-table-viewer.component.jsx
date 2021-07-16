@@ -39,6 +39,9 @@ const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, 
                 <Modal.Body>
                     <h4>Reservation details</h4>
                     <DateTimePicker
+                        disablePast
+                        minutesStep={60}
+                        views={['year', 'month', 'day', 'hours']}
                         renderInput={(props) => <TextField {...props} />}
                         label=""
                         value={roundToHour(reservation.dateAndTime)}

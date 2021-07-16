@@ -15,11 +15,7 @@ export const createReservationSuccess = (reservation) => ({
     payload: reservation
 });
 
-export const updateReservationStart = (reservation, table = undefined, dateAndTime = undefined, customerName = undefined, customerPhone = undefined) => {
-    table = table ? table : reservation.table;
-    dateAndTime = dateAndTime ? dateAndTime : reservation.dateAndTime;
-    customerName = customerName ? customerName : reservation.customerName;
-    customerPhone = customerPhone ? customerPhone : reservation.customerPhone;
+export const updateReservationStart = (reservation, table, dateAndTime, customerName, customerPhone) => {
     return {
         type: ReservationActionsTypes.UPDATE_RESERVATION_START,
         payload: {

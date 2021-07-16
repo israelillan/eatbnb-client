@@ -6,12 +6,12 @@ export const reservationFromBackendObject = (backendObject, table) => {
 
 export const updateReservation = (reservations, reservationToUpdate) => {
     return reservations.map(reservation =>
-        reservation.id === reservationToUpdate.id
+        reservation.backendObject.id === reservationToUpdate.backendObject.id
             ? reservationToUpdate
             : reservation
     );
 };
 
 export const removeReservation = (reservations, reservationToRemove) => {
-    return reservations.filter(reservation => reservation.id !== reservationToRemove.id);
+    return reservations.filter(reservation => reservation.backendObject.id !== reservationToRemove.backendObject.id);
 };

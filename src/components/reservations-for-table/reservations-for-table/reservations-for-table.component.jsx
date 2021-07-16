@@ -14,9 +14,9 @@ import ReservationsForTableCreate from "../reservations-for-table-create/reserva
 import {createStructuredSelector} from "reselect";
 import {selectReservations} from "../../../redux/reservation/reservation.selectors";
 import ReservationForTableViewer from "../reservation-for-table-viewer/reservation-for-table-viewer.component";
-import {updateReservationStart} from "../../../redux/reservation/reservation.actions";
+import {deleteReservationStart, updateReservationStart} from "../../../redux/reservation/reservation.actions";
 
-const ReservationsForTable = ({table, reservations, doUpdateReservation}) => {
+const ReservationsForTable = ({table, reservations, doUpdateReservation, doDeleteReservation}) => {
     const [reservationBeingEdited, setReservationBeingEdited] = useState(null);
 
     const reservationClicked = (reservation) => {
@@ -81,6 +81,10 @@ const ReservationsForTable = ({table, reservations, doUpdateReservation}) => {
                 setReservationBeingEdited(null)
             }}
             onAccept={updateReservation}
+            onDelete={(r) => {
+                doDeleteReservation(r);
+                setReservationBeingEdited(null);
+            }}
         />
 
     </ReservationsForTableContainer>;
@@ -92,5 +96,6 @@ export default connect(
     }),
     dispatch => ({
         doUpdateReservation: (reservation, table, dateAndTime, customerName, customerPhone) => dispatch(updateReservationStart(reservation, table, dateAndTime, customerName, customerPhone)),
+        doDeleteReservation: (reservation) => dispatch(deleteReservationStart(reservation))
     }))
 (ReservationsForTable);

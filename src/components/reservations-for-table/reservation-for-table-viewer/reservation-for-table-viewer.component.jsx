@@ -1,13 +1,14 @@
 import React from 'react';
 import {ReservationForTableViewerContainer} from "./reservation-for-table-viewer.styles";
-import {Button, Form, Modal} from "react-bootstrap";
-import DateTimePicker from "react-datetime-picker";
+import {Form, Modal} from "react-bootstrap";
 import {roundToHour} from "../../../utils/date";
 import {connect} from "react-redux";
 import {createStructuredSelector} from "reselect";
 import {selectReservations} from "../../../redux/reservation/reservation.selectors";
+import {DateTimePicker} from "@material-ui/lab";
+import {Button, TextField} from "@material-ui/core";
 
-const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, onAccept, reservations}) => {
+const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, onAccept, onDelete, reservations}) => {
     const isReservationValid = () => {
         if (!reservation) {
             return false;
@@ -27,6 +28,9 @@ const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, 
             reservation.customerPhone;
     };
 
+    const deleteButton = onDelete ?
+        <Button color="error" onClick={() => onDelete(reservation)}>Delete</Button>
+        : null;
     if(!reservation) {
         return null;
     } else {
@@ -34,14 +38,17 @@ const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, 
             <Modal show={!!reservation} onHide={onHide} backdrop='static' keyboard='false' centered>
                 <Modal.Body>
                     <h4>Reservation details</h4>
-                    <DateTimePicker closeWidgets={false} maxDetail='hour' minDate={new Date()} required clearIcon={null}
-                                    onChange={v =>
-                                        setReservationDetails({
-                                            ...reservation,
-                                            dateAndTime: roundToHour(v)
-                                        })
-                                    }
-                                    value={reservation.dateAndTime}
+                    <DateTimePicker
+                        renderInput={(props) => <TextField {...props} />}
+                        label=""
+                        value={roundToHour(reservation.dateAndTime)}
+                        onChange={(v) => {
+                            setReservationDetails({
+                               ...reservation,
+                               dateAndTime: roundToHour(v)
+                            });
+                        }}
+                        minDateTime={reservation.backendObject ? reservation.dateAndTime : roundToHour(new Date())}
                     />
                     <Form.Group>
                         <Form.Label>Customer name</Form.Label>
@@ -64,6 +71,7 @@ const ReservationForTableViewer = ({reservation, setReservationDetails, onHide, 
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
+                    { deleteButton }
                     <Button onClick={() => onAccept(reservation)}
                             disabled={!isReservationValid()}>Accept</Button>
                     <Button onClick={onHide}>Cancel</Button>

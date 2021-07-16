@@ -109,28 +109,39 @@ function* queryReservationsReport({payload: {date}}) {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const tableQuery = new Parse.Query('Table');
-
         const query = new Parse.Query('Reservation');
-        query.greaterThanOrEqualTo('dateAndTime', today);
-        query.lessThan('dateAndTime', tomorrow);
-        query.ascending('dateAndTime');
+        let results = [];
+        let skip = 0;
+        const limit = 100;
+        while(true) {
+            query.greaterThanOrEqualTo('dateAndTime', today);
+            query.lessThan('dateAndTime', tomorrow);
+            query.include('table');
+            query.ascending('table.reference');
+            query.addAscending('dateAndTime');
+            query.limit(limit);
+            query.skip(skip);
 
-        const results = yield query.find();
-        const reservationsReport = [];
-
-        let tables = (yield select(selectTables)).reduce((a,x) => ({...a, [x.backendObject.id]: x}), {})
-
-        for (const result of results) {
-            const tableId = result.get('table').id;
-            if (!(tableId in tables)) {
-                const queriedTables = yield tableQuery.find();
-                const tablesArray = queriedTables.map(t => {
-                    return tableFromBackendObject(t);
-                });
-                tables = tablesArray.reduce((a,x) => ({...a, [x.backendObject.id]: x}), {})
+            const tempResults = yield query.find();
+            results = results.concat(tempResults);
+            if (tempResults.length < limit) {
+                break;
             }
-            reservationsReport.push(reservationFromBackendObject(result, tables[tableId]));
+            skip += limit;
+        }
+        const reservationsReport = {};
+        for (const result of results) {
+            const table = result.get('table');
+            const tableReference = table.get('reference');
+            if (!(tableReference in reservationsReport)) {
+                reservationsReport[tableReference] = {
+                    table: table.attributes,
+                    reservations: []
+                };
+            }
+            reservationsReport[tableReference].reservations.push(
+                result.attributes
+            );
         }
         yield put(getReservationsReportSuccess(reservationsReport));
     } catch (error) {

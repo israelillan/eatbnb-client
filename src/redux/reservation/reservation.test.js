@@ -440,7 +440,8 @@ describe('signed it reservation tests', () => {
             getReservationsReportStart(now), onGetReservationsReportStart());
 
         expect(finalState.reservation.error).toBeFalsy();
-        expect(finalState.reservation.reservationsReport.length).toEqual(16);
+        expect(finalState.reservation.reservationsReport[1].reservations.length).toEqual(8);
+        expect(finalState.reservation.reservationsReport[2].reservations.length).toEqual(8);
     });
     it('cannot create a reservation in the same table at the same time', async () => {
         const table = await createTable(1, 8);

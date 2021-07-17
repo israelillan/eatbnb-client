@@ -1,45 +1,57 @@
 import React, {useState} from 'react';
-import {RestaurantNameContainer} from "./restaurant-name.styles";
-import FormInput from "../../../components/form-input/form-input.component";
-import CustomButton from "../../../components/custom-button/curtom-button.component";
 import {connect} from "react-redux";
 import {setRestaurantNameStart} from "../../../redux/user/user.actions";
+import {Button, TextField, Typography} from "@material-ui/core";
+import {CenteredContainer} from "../../../components/common-styles/common.styles";
+import {Col, Row} from "react-bootstrap";
 
-const RestaurantNamePage = ({setRestaurantNameStart}) => {
+const RestaurantNamePage = ({doSetRestaurantName}) => {
     const [restaurantName, setRestaurantName] = useState('');
 
-    const handleSubmit = async event => {
-        event.preventDefault();
-
-        setRestaurantNameStart(restaurantName);
+    const sendRestaurantName = () => {
+        if(restaurantName) {
+            doSetRestaurantName(restaurantName);
+        }
     };
 
-    const handleChange = event => {
+    const valueChanged = event => {
         const {value} = event.target;
 
         setRestaurantName(value);
     };
 
     return (
-        <RestaurantNameContainer>
-            <span>Enter your restaurantName</span>
-            <form onSubmit={handleSubmit}>
-                <FormInput
-                    name='restaurantName'
-                    handleChange={handleChange}
-                    value={restaurantName}
-                    label='restaurantName'
-                    required
-                />
-                <CustomButton type='submit'>Save</CustomButton>
-            </form>
-        </RestaurantNameContainer>
+        <CenteredContainer>
+            <Row>
+                <Col>
+                    <Typography variant='h6'>Enter your restaurant name</Typography>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        name='restaurantName'
+                        onChange={valueChanged}
+                        value={restaurantName}
+                        label='restaurantName'
+                        required
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col align='center'>
+                    <Button onClick={sendRestaurantName} disabled={!restaurantName}>Save</Button>
+                </Col>
+            </Row>
+        </CenteredContainer>
     );
 };
 
 export default connect(
     null,
     dispatch => ({
-        setRestaurantNameStart: (restaurantName) => dispatch(setRestaurantNameStart(restaurantName))
+        doSetRestaurantName: (restaurantName) => dispatch(setRestaurantNameStart(restaurantName))
     })
 )(RestaurantNamePage);

@@ -32,7 +32,6 @@ const RestaurantHomePage = ({reservationsReport, getReservationsReport}) => {
         }
     }
 
-    console.log(reservationsReport);
     return <RestaurantPageContainer>
         <Link to='/restaurant/tablesLayout'>Edit tables layout</Link>
         <br/>

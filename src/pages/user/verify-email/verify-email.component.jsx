@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react';
-import {VerifyEmailContainer} from "./verify-email.styles";
 import {connect} from "react-redux";
 import {checkUserSession} from "../../../redux/user/user.actions";
+import {CenteredContainer} from "../../../components/common-styles/common.styles";
+import {Col, Row} from "react-bootstrap";
+import Typography from "@material-ui/core/Typography";
 
 const VerifyEmailPage = ({checkUserSession}) => {
     useEffect(() => {
@@ -15,12 +17,16 @@ const VerifyEmailPage = ({checkUserSession}) => {
 
 
     return (
-        <VerifyEmailContainer>
-            <span>Please check your email to verify your account</span>
-        </VerifyEmailContainer>
+        <CenteredContainer>
+            <Row>
+                <Col>
+                    <Typography textAlign='center' variant='h5'>Please check your email to verify your account</Typography>
+                </Col>
+            </Row>
+        </CenteredContainer>
     );
 };
 
 export default connect(null,
-    dispatch => ({checkUserSession: ()=> dispatch(checkUserSession())})
+    dispatch => ({checkUserSession: () => dispatch(checkUserSession())})
 )(VerifyEmailPage);

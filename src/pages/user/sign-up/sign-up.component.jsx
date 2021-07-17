@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, {useState} from 'react';
+import {connect} from 'react-redux';
 import {signUpStart} from "../../../redux/user/user.actions";
-import { SignUpContainer } from './sign-up.styles';
-import FormInput from "../../../components/form-input/form-input.component";
-import CustomButton from "../../../components/custom-button/curtom-button.component";
 import {Link} from "react-router-dom";
+import {Button, TextField, Typography} from "@material-ui/core";
+import {CenteredContainer} from "../../../components/common-styles/common.styles";
+import {Col, Row} from "react-bootstrap";
+import {createStructuredSelector} from "reselect";
+import {selectError} from "../../../redux/user/user.selectors";
 
-const SignUp = ({signUpStart}) => {
+const SignUp = ({userError, signUpStart}) => {
     const [userCredentials, setUserCredentials] = useState({
         managerName: '',
         email: '',
@@ -14,70 +16,99 @@ const SignUp = ({signUpStart}) => {
         confirmPassword: ''
     });
 
-    const { managerName, email, password, confirmPassword } = userCredentials;
+    const {managerName, email, password, confirmPassword} = userCredentials;
 
-    const handleSubmit = async event => {
-        event.preventDefault();
-
+    const signUp = () => {
         if (password !== confirmPassword) {
-            alert("passwords don't match");
             return;
         }
 
         signUpStart(email, password, managerName);
     };
 
-    const handleChange = event => {
+    const valueChanged = event => {
         const {name, value} = event.target;
-
         setUserCredentials({...userCredentials, [name]: value});
     };
 
     return (
-        <SignUpContainer>
-            <span>Sign up with your email and password</span>
-            <Link to='/sign-in'>I already have an account</Link>
-            <form className='sign-up-form' onSubmit={handleSubmit}>
-                <FormInput
-                    type='text'
-                    name='managerName'
-                    value={managerName}
-                    onChange={handleChange}
-                    label='Display Name'
-                    required
-                />
-                <FormInput
-                    type='email'
-                    name='email'
-                    value={email}
-                    onChange={handleChange}
-                    label='Email'
-                    required
-                />
-                <FormInput
-                    type='password'
-                    name='password'
-                    value={password}
-                    onChange={handleChange}
-                    label='Password'
-                    required
-                />
-                <FormInput
-                    type='password'
-                    name='confirmPassword'
-                    value={confirmPassword}
-                    onChange={handleChange}
-                    label='Confirm Password'
-                    required
-                />
-                <CustomButton type='submit'>Sign up</CustomButton>
-            </form>
-        </SignUpContainer>
+        <CenteredContainer>
+            <Row>
+                <Col>
+                    <Typography variant='h6'>Create a new account</Typography>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        type='text'
+                        name='managerName'
+                        value={managerName}
+                        onChange={valueChanged}
+                        label='Manager name'
+                        required
+                        error={!!userError}
+                        helperText={userError ? `${userError}` : ''}
+                    />
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        type='email'
+                        name='email'
+                        value={email}
+                        onChange={valueChanged}
+                        label='Email'
+                        required
+                        error={!!userError}
+                        helperText={userError ? `${userError}` : ''}
+                    />
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        type='password'
+                        name='password'
+                        value={password}
+                        onChange={valueChanged}
+                        label='Password'
+                        required
+                        error={password !== confirmPassword}
+                    />
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        type='password'
+                        name='confirmPassword'
+                        value={confirmPassword}
+                        onChange={valueChanged}
+                        label='Confirm Password'
+                        required
+                        error={password !== confirmPassword}
+                        helperText={(password !== confirmPassword) ? 'Passwords don\'t match' : ''}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col align='center'>
+                    <Button onClick={signUp}>Sign up</Button>
+                </Col>
+            </Row>
+            <Row>
+                <Col align='right'>
+                    <Typography variant='caption'>
+                        <Link to='/sign-in'>I already have an account</Link>
+                    </Typography>
+                </Col>
+            </Row>
+        </CenteredContainer>
     );
 }
 
 export default connect(
-    null,
+    createStructuredSelector({
+        userError: selectError
+    }),
     (dispatch) => ({
         signUpStart: (email, password, managerName) => dispatch(signUpStart(email, password, managerName))
     })

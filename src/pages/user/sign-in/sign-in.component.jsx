@@ -2,62 +2,93 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 
-import {SignInContainer} from "./sign-in.styles";
-
 import {signInStart} from '../../../redux/user/user.actions'
 
-import FormInput from "../../../components/form-input/form-input.component";
-import CustomButton from "../../../components/custom-button/curtom-button.component";
+import {Button, TextField, Typography} from "@material-ui/core";
+import {Col, Row} from "react-bootstrap";
+import {CenteredContainer} from "../../../components/common-styles/common.styles";
+import {selectError} from "../../../redux/user/user.selectors";
+import {createStructuredSelector} from "reselect";
 
-const SignIn = ({signInStart}) => {
+const SignIn = ({userError, signInStart}) => {
     const [userCredentials, setCredentials] = useState({
         email: '',
         password: ''
     });
 
-    const { email, password } = userCredentials;
+    const {email, password} = userCredentials;
 
-    const handleSubmit = async event => {
-        event.preventDefault();
-
+    const signIn = () => {
         signInStart(email, password);
     };
 
-    const handleChange = event => {
-        const { value, name } = event.target;
+    const valueChanged = (event) => {
+        const {value, name} = event.target;
 
-        setCredentials({ ...userCredentials, [name]: value });
+        setCredentials({...userCredentials, [name]: value});
     };
 
     return (
-        <SignInContainer>
-            <span>Sign in with your email and password</span>
-            <Link to='/sign-up'>Create an account</Link>
-            <form onSubmit={handleSubmit}>
-                <FormInput
-                    name='email'
-                    type='email'
-                    handleChange={handleChange}
-                    value={email}
-                    label='email'
-                    required
-                />
-                <FormInput
-                    name='password'
-                    type='password'
-                    value={password}
-                    handleChange={handleChange}
-                    label='password'
-                    required
-                />
-                <CustomButton type='submit'>Sign in</CustomButton>
-            </form>
-        </SignInContainer>
-    )
+        <CenteredContainer>
+            <Row>
+                <Col>
+                    <Typography variant='h6'>Sign in with your email and password</Typography>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        name='email'
+                        type='email'
+                        onChange={valueChanged}
+                        value={email}
+                        label='email'
+                        required
+                        error={!!userError}
+                        helperText={userError ? `${userError}` : ''}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TextField
+                        margin='normal'
+                        fullWidth
+                        name='password'
+                        type='password'
+                        value={password}
+                        onChange={valueChanged}
+                        label='password'
+                        required
+                        error={!!userError}
+                        helperText={userError ? `${userError}` : ''}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col align='center'>
+                    <Button onClick={signIn} variant='outlined'>Sign in</Button>
+                </Col>
+            </Row>
+            <Row>
+                <Col align='right'>
+                    <Link to='/sign-up'>
+                        <Typography variant='caption'>
+                            Create an account
+                        </Typography>
+                    </Link>
+                </Col>
+            </Row>
+        </CenteredContainer>
+    );
 };
 
 export default connect(
-    null,
+    createStructuredSelector({
+        userError: selectError
+    }),
     (dispatch) => ({
         signInStart: (email, password) => dispatch(signInStart(email, password))
     })

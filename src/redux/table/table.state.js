@@ -1,5 +1,4 @@
 const INITIAL_STATE = {
-    error: null,
     tables: []
 };
 

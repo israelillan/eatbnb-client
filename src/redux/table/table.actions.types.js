@@ -9,8 +9,6 @@ const TableActionsTypes = {
     DELETE_TABLE_SUCCESS: 'DELETE_TABLE_SUCCESS',
 
     GET_TABLES_SUCCESS: 'GET_TABLES_SUCCESS',
-
-    TABLE_BACKEND_ERROR: 'TABLE_BACKEND_ERROR'
 };
 
 export default TableActionsTypes;

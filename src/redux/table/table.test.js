@@ -20,7 +20,7 @@ describe('logged out table tests', () => {
     it('cannot create a table', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables).toEqual([]);
     });
 });
@@ -47,7 +47,7 @@ describe('signed in table tests', () => {
     it('create a table', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].backendObject).toBeTruthy();
         expect(finalState.table.tables[0].reference).toBeTruthy();
@@ -62,7 +62,7 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState,
             updateTableStart(tableCreationSagaResult.finalState.table.tables[0], 1, 1, 2), onUpdateTableStart());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].backendObject.id).toEqual(tableCreationSagaResult.finalState.table.tables[0].backendObject.id);
         expect(finalState.table.tables[0].reference).toEqual(tableCreationSagaResult.finalState.table.tables[0].reference);
@@ -77,14 +77,14 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState,
             deleteTableStart(tableCreationSagaResult.finalState.table.tables[0]), onDeleteTableStart());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('clear tables on user sign out', async () => {
         const tableCreationSagaResult = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 1), onCreateTableStart());
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, signOutStart(), onSignOutStart());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('read tables on user sign in', async () => {
@@ -93,7 +93,7 @@ describe('signed in table tests', () => {
         const signInResult = await testSaga(logoutSagaResult.finalState, signInStart(mockUser.email, mockUserPassword), onSignInStart());
         const {finalState} = await testSaga(signInResult.finalState, signInSuccess(mockUser), onSignInSuccess());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].backendObject).toBeTruthy();
         expect(finalState.table.tables[0].reference).toBeTruthy();
@@ -105,45 +105,45 @@ describe('signed in table tests', () => {
     it('cannot create a table outside the layout (-1,0)', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(-1, 0, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('cannot create a table outside the layout (0,-1)', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(0, -1, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('cannot create a table outside the layout (15,0)', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(15, 0, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('cannot create a table outside the layout (0,10)', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(0, 10, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('cannot create a table with seats < 1', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 0), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(0);
     });
     it('cannot create a table where another already exists', async () => {
         const tableCreationSagaResult = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 1), onCreateTableStart());
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, createTableStart(0, 0, 1), onCreateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
     });
     it('cannot move a table outside the layout (-1,0)', async () => {
         const tableCreationSagaResult = await testSaga({table: INITIAL_STATE}, createTableStart(0, 0, 1), onCreateTableStart());
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(-1, 0, 1), onUpdateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -154,7 +154,7 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(0, -1, 1), onUpdateTableStart());
 
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -165,7 +165,7 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(15, 0, 1), onUpdateTableStart());
 
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -176,7 +176,7 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(0, 10, 1), onUpdateTableStart());
 
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -187,7 +187,7 @@ describe('signed in table tests', () => {
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(0, 0, 0), onUpdateTableStart());
 
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(1);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -198,7 +198,7 @@ describe('signed in table tests', () => {
         const tableCreationSagaResult = await testSaga(existingtableCreationSagaResult.finalState, createTableStart(1, 1, 2), onCreateTableStart());
         const {finalState} = await testSaga(tableCreationSagaResult.finalState, updateTableStart(0, 0, 1), onUpdateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.table.tables.length).toEqual(2);
         expect(finalState.table.tables[0].x).toEqual(0);
         expect(finalState.table.tables[0].y).toEqual(0);
@@ -224,10 +224,9 @@ describe('signed in table tests', () => {
         const signInResult = await testSaga(logoutSagaResult.finalState, signInStart(mockUser.email, mockUserPassword), onSignInStart());
         const {finalState} = await testSaga(signInResult.finalState, signInSuccess(mockUser), onSignInSuccess());
 
-        expect(finalState.table.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.table.tables.length).toEqual(150);
     });
-
 });
 
 describe('signed in table tests against other user', () => {
@@ -263,12 +262,12 @@ describe('signed in table tests against other user', () => {
         const {finalState} = await testSaga({table: INITIAL_STATE},
             updateTableStart(otherUserTable, 1, 1, 2), onUpdateTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
     });
     it('cannot delete other user\'s tables', async () => {
         const {finalState} = await testSaga({table: INITIAL_STATE},
             deleteTableStart(otherUserTable), onDeleteTableStart());
 
-        expect(finalState.table.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
     });
 });

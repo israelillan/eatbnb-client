@@ -14,7 +14,7 @@ export const testSaga = async (initialState, startActionData, generator) => {
 
     let finalState = initialState;
     actionsDispatched.forEach(action => {
-        finalState = rootReducer(initialState, action);
+        finalState = rootReducer(finalState, action);
     })
 
     return {actionsDispatched, finalState};

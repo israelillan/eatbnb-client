@@ -5,11 +5,6 @@ import {removeTable, updateTable} from "./table.utils";
 
 const tableReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case TableActionsTypes.TABLE_BACKEND_ERROR:
-            return {
-                ...state,
-                error: action.payload.error
-            };
         case UserActionTypes.SIGN_OUT_SUCCESS:
             return {
                 ...state,

@@ -3,11 +3,11 @@ import {HTML5Backend} from "react-dnd-html5-backend";
 import {DndProvider} from "react-dnd";
 import {connect} from "react-redux";
 import {createStructuredSelector} from "reselect";
+import {Grid} from "@material-ui/core";
 
-import {Table, TablesLayoutContainer} from "./tables-layout.styles";
-import TablesLayoutCell from "../tables-layout-cell/tables-layout-cell.component";
-import TablesLayoutTable from "../tables-layout-table/tables-layout-table.component";
+import EmptyCell from "../empty-cell/empty-cell.component";
 import {selectTables} from "../../../redux/table/table.selectors";
+import TableCell from "../table-cell/table-cell.component";
 
 const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) => {
     const MAX_COLS = 15;
@@ -21,27 +21,28 @@ const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) =
             const index = `${i},${j}`;
             const table = index in layoutMap ? layoutMap[index] : null;
             cells.push(
-                <TablesLayoutCell x={i} y={j} key={i * MAX_ROWS + j} rows={MAX_ROWS} cols={MAX_COLS} table={table}
-                                  onTableDropped={onTableDropped}
-                                  onCellClicked={table ? null : onCellClicked}>
-                    {table
-                        ? <TablesLayoutTable x={i} y={j} table={table}
-                                             allowDragging={!!onTableDropped}
-                                             onTableClick={onTableClicked}/>
-                        : null}
-                </TablesLayoutCell>
+                <Grid key={i * MAX_ROWS + j} item xs={1} onClick={table ? null : () => onCellClicked(i, j)}>
+                    {table ?
+                        <TableCell sx={{minHeight: 30, minWidth: 30}} table={table} allowDragging={true}
+                                   onTableClick={onTableClicked} /> :
+                        <EmptyCell sx={{minHeight: 30, minWidth: 30}} x={i} y={j}
+                                   onClick={onCellClicked}
+                                   onTableDropped={onTableDropped} />}
+                </Grid>
             );
         }
     }
 
-    return <TablesLayoutContainer aspect={MAX_COLS / MAX_ROWS}>
-        <DndProvider backend={HTML5Backend}>
-            <Table>
-                {cells}
-            </Table>
-        </DndProvider>
-    </TablesLayoutContainer>;
-}
+    return <DndProvider backend={HTML5Backend}>
+        <Grid columns={MAX_COLS} container
+              direction="row"
+              justifyContent="flex-end"
+              spacing={1}
+        >
+            {cells}
+        </Grid>
+    </DndProvider>;
+};
 
 export default connect(
     createStructuredSelector({

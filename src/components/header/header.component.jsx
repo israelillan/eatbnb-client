@@ -5,6 +5,8 @@ import {connect} from "react-redux";
 import {Button, Container, Navbar} from "react-bootstrap";
 import MenuIcon from '@material-ui/icons/Menu';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import EventSeatIcon from '@material-ui/icons/EventSeat';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 
 import {selectCurrentUser} from "../../redux/user/user.selectors";
 import {Link} from "react-router-dom";
@@ -44,21 +46,21 @@ const Header = ({history, currentUser, signOut}) => {
                     history.push('/restaurant');
                     handleClose();
                 }}>
-                    <ListItemIcon><AssessmentIcon />></ListItemIcon>
+                    <ListItemIcon><AssessmentIcon /></ListItemIcon>
                     <ListItemText>Reservations report</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => {
                     history.push('/restaurant/tablesLayout');
                     handleClose();
                 }}>
-                    <ListItemIcon><AssessmentIcon />></ListItemIcon>
+                    <ListItemIcon><EventSeatIcon /></ListItemIcon>
                     <ListItemText>Edit tables layout</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => {
                     history.push('/restaurant/reservations');
                     handleClose();
                 }}>
-                    <ListItemIcon><AssessmentIcon />></ListItemIcon>
+                    <ListItemIcon><BookmarkIcon /></ListItemIcon>
                     <ListItemText>Manage reservations</ListItemText>
                 </MenuItem>
             </Menu>

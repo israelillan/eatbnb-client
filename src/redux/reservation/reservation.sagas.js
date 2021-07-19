@@ -1,17 +1,16 @@
-import {all, put, takeLatest, select} from "redux-saga/effects";
+import {all, put, select, takeLatest} from "redux-saga/effects";
 import Parse from "../../backend/parse.utils";
 import ReservationActionsTypes from "./reservation.actions.types";
 import {
     backendError,
     createReservationSuccess,
-    deleteReservationSuccess, getReservationsReportSuccess,
+    deleteReservationSuccess,
+    getReservationsReportSuccess,
     getReservationsSuccess,
     updateReservationSuccess
 } from "./reservation.actions";
 import {reservationFromBackendObject} from "./reservation.utils";
 import {selectQuery, selectReservations, selectSort, selectTable} from "./reservation.selectors";
-import {selectTables} from "../table/table.selectors";
-import {tableFromBackendObject} from "../table/table.utils";
 
 function* createReservation({payload: {table, dateAndTime, customerName, customerPhone}}) {
     try {
@@ -82,7 +81,7 @@ function* queryReservations({payload: {table, sort, query: reservationsQuery}}) 
             reservationsQuery(query);
         }
         query.skip(currentReservations.length);
-        if(sort.startsWith('-')) {
+        if (sort.startsWith('-')) {
             query.descending(sort.substring(1));
         } else {
             query.ascending(sort);
@@ -113,7 +112,7 @@ function* queryReservationsReport({payload: {date}}) {
         let results = [];
         let skip = 0;
         const limit = 100;
-        while(true) {
+        while (true) {
             query.greaterThanOrEqualTo('dateAndTime', today);
             query.lessThan('dateAndTime', tomorrow);
             query.include('table');

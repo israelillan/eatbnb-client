@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {connect} from "react-redux";
 
-import {TablesLayoutEditorContainer} from "./tables-layout-editor.styles";
-
 import {createTableStart, deleteTableStart, updateTableStart} from "../../../redux/table/table.actions";
-import {Button, Modal} from "react-bootstrap";
-import {Link} from "react-router-dom";
+import {Button, Col, Modal, Row} from "react-bootstrap";
 import TablesLayout from "../../../components/tables-layout/tables-layout/tables-layout.component";
+import {BigCenteredContainer} from "../../../components/common-styles/common.styles";
+import {Typography} from "@material-ui/core";
 
 const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispatchDeleteTable}) => {
     const [openModal, setOpenModal] = useState(false);
@@ -14,6 +13,7 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
     const [tableSeats, setTableSeats] = useState(4)
 
     const cellClicked = (x, y) => {
+        console.log(`${x} ${y}`);
         setSelectedCell({x, y, table: null});
         setOpenModal(true);
     };
@@ -49,14 +49,23 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
 
 
     return (
-        <TablesLayoutEditorContainer>
-            <span>Set up your restaurant tables layout</span>
-                <TablesLayout onCellClicked={cellClicked} onTableClicked={tableClicked} onTableDropped={tableDropped} />
+        <BigCenteredContainer>
+            <Row>
+                <Col>
+                    <Typography variant='h6'>Set up your restaurant tables layout</Typography>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TablesLayout onCellClicked={cellClicked} onTableClicked={tableClicked}
+                                  onTableDropped={tableDropped}/>
+                </Col>
+            </Row>
             <Modal show={openModal} onHide={closeModal} backdrop='static' keyboard='false' centered>
                 <Modal.Body>
                     <h4>Enter number of seats</h4>
                     <input type='number' min='1' step='1'
-                           onChange={event => setTableSeats(Math.max(1, event.target.value))} value={tableSeats}/>
+                           onChange={event => setTableSeats(Math.max(1, parseInt(event.target.value)))} value={tableSeats}/>
                 </Modal.Body>
                 <Modal.Footer>
                     {selectedCell?.table ? <Button onClick={deleteCell}>Delete</Button> : null}
@@ -64,9 +73,7 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
                     <Button onClick={closeModal}>Cancel</Button>
                 </Modal.Footer>
             </Modal>
-            <br />
-            <Link to='/restaurant/'>Done</Link>
-        </TablesLayoutEditorContainer>
+        </BigCenteredContainer>
     );
 };
 

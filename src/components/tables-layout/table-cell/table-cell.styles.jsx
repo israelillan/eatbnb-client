@@ -2,12 +2,12 @@ import styled, {css} from 'styled-components';
 
 const getDragStyle = ({isDragging, allowDragging}) => (
     css`
-      opacity: ${isDragging ? 0.5 : 1};
+      opacity: ${isDragging ? 0.5 : 1.0};
       cursor: ${allowDragging ? 'move' : 'pointer'};
     `
 )
 
-export const TablesLayoutTableContainer = styled.div`
+export const TableCellContainer = styled.div`
   background: #4343b8;
   width: 100%;
   height: 100%;

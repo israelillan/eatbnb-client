@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {RestaurantPageContainer} from "./restaurant-homepage.styles";
-import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {createStructuredSelector} from "reselect";
 import {DatePicker} from "@material-ui/lab";
@@ -13,9 +12,8 @@ import {format} from "date-fns";
 const RestaurantHomePage = ({reservationsReport, getReservationsReport}) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    useEffect(() => getReservationsReport(selectedDate), []);
+    useEffect(() => getReservationsReport(selectedDate), [setSelectedDate]);
 
-    console.log(reservationsReport);
     const reservationReportListItems = [];
     for (let tableReference in reservationsReport) {
         reservationReportListItems.push(<ListItemText key={tableReference} primary={`Table #${tableReference}`}/>);
@@ -33,11 +31,6 @@ const RestaurantHomePage = ({reservationsReport, getReservationsReport}) => {
     }
 
     return <RestaurantPageContainer>
-        <Link to='/restaurant/tablesLayout'>Edit tables layout</Link>
-        <br/>
-        <Link to='/restaurant/reservations'>Reservations</Link>
-        <br/>
-        <br/>
         <DatePicker
             label=""
             value={selectedDate}

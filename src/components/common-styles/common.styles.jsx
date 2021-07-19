@@ -5,3 +5,6 @@ export const CenteredContainer = styled(Container)`
   margin-top: 40px;
   max-width: 400px;
 `;
+export const BigCenteredContainer = styled(Container)`
+  margin-top: 40px;
+`;

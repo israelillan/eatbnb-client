@@ -5,8 +5,6 @@ import {Link} from "react-router-dom";
 import {Button, TextField, Typography} from "@material-ui/core";
 import {CenteredContainer} from "../../../components/common-styles/common.styles";
 import {Col, Row} from "react-bootstrap";
-import {createStructuredSelector} from "reselect";
-import {selectError} from "../../../redux/user/user.selectors";
 
 const SignUp = ({userError, signUpStart}) => {
     const [userCredentials, setUserCredentials] = useState({
@@ -49,8 +47,6 @@ const SignUp = ({userError, signUpStart}) => {
                         onChange={valueChanged}
                         label='Manager name'
                         required
-                        error={!!userError}
-                        helperText={userError ? `${userError}` : ''}
                     />
                     <TextField
                         margin='normal'
@@ -61,8 +57,6 @@ const SignUp = ({userError, signUpStart}) => {
                         onChange={valueChanged}
                         label='Email'
                         required
-                        error={!!userError}
-                        helperText={userError ? `${userError}` : ''}
                     />
                     <TextField
                         margin='normal'
@@ -106,9 +100,7 @@ const SignUp = ({userError, signUpStart}) => {
 }
 
 export default connect(
-    createStructuredSelector({
-        userError: selectError
-    }),
+    null,
     (dispatch) => ({
         signUpStart: (email, password, managerName) => dispatch(signUpStart(email, password, managerName))
     })

@@ -35,6 +35,7 @@ function* signUp({payload: {email, password, managerName}}) {
     user.set("managerName", managerName);
 
     try {
+        yield Parse.User.logOut();
         yield user.signUp();
         const currentUser = Parse.User.current();
         yield put(signInSuccess(userFromBackendObject(currentUser)));
@@ -62,6 +63,7 @@ export function* onSignOutStart() {
 
 function* signIn({payload: {email, password}}) {
     try {
+        yield Parse.User.logOut();
         yield Parse.User.logIn(email, password);
         const currentUser = Parse.User.current();
         yield put(signInSuccess(userFromBackendObject(currentUser)));

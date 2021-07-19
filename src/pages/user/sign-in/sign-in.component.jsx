@@ -7,10 +7,8 @@ import {signInStart} from '../../../redux/user/user.actions'
 import {Button, TextField, Typography} from "@material-ui/core";
 import {Col, Row} from "react-bootstrap";
 import {CenteredContainer} from "../../../components/common-styles/common.styles";
-import {selectError} from "../../../redux/user/user.selectors";
-import {createStructuredSelector} from "reselect";
 
-const SignIn = ({userError, signInStart}) => {
+const SignIn = ({signInStart}) => {
     const [userCredentials, setCredentials] = useState({
         email: '',
         password: ''
@@ -46,8 +44,6 @@ const SignIn = ({userError, signInStart}) => {
                         value={email}
                         label='email'
                         required
-                        error={!!userError}
-                        helperText={userError ? `${userError}` : ''}
                     />
                 </Col>
             </Row>
@@ -62,8 +58,6 @@ const SignIn = ({userError, signInStart}) => {
                         onChange={valueChanged}
                         label='password'
                         required
-                        error={!!userError}
-                        helperText={userError ? `${userError}` : ''}
                     />
                 </Col>
             </Row>
@@ -86,9 +80,7 @@ const SignIn = ({userError, signInStart}) => {
 };
 
 export default connect(
-    createStructuredSelector({
-        userError: selectError
-    }),
+    null,
     (dispatch) => ({
         signInStart: (email, password) => dispatch(signInStart(email, password))
     })

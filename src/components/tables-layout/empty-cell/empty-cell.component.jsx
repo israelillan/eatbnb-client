@@ -18,7 +18,7 @@ const EmptyCell = ({x, y, onTableDropped, onClick}) => {
         }),
     }), [x, y])
 
-    return <TablesLayoutCellContainer ref={drop} onClick={onClick} isOver={isOver}>
+    return <TablesLayoutCellContainer ref={drop} onClick={onClick ? () => onClick(x, y) : null} isOver={isOver}>
         <Paper> </Paper>
     </TablesLayoutCellContainer>;
 };

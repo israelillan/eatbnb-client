@@ -87,11 +87,14 @@ function* queryReservations({payload: {table, sort, query: reservationsQuery}}) 
             query.ascending(sort);
         }
 
+        const LIMIT = 100;
         const results = yield query.find();
+        query.limit(LIMIT);
         const reservations = results.map(r => {
             return reservationFromBackendObject(r, table)
         });
-        yield put(getReservationsSuccess(currentReservations.concat(reservations), table, sort, reservationsQuery, results.length > 0));
+        yield put(getReservationsSuccess(currentReservations.concat(reservations), table, sort, reservationsQuery,
+            results.length === LIMIT));
     } catch (error) {
         yield put(backendError(error));
     }

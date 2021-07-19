@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
 import {connect} from "react-redux";
+import {Col, Row} from "react-bootstrap";
 import {
-    Box,
     Button,
     ButtonGroup,
     ClickAwayListener,
+    Container,
+    Divider,
     Grow,
     ListItemButton,
+    ListItemIcon,
     MenuItem,
     MenuList,
     Paper,
@@ -18,8 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import {FixedSizeList} from 'react-window';
 import {format} from 'date-fns';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-
-import {ReservationsForTableContainer} from "./reservations-for-table.styles";
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import ReservationsForTableCreate from "../reservations-for-table-create/reservations-for-table-create.component";
 import {createStructuredSelector} from "reselect";
@@ -30,6 +32,7 @@ import {
     getReservationsStart,
     updateReservationStart
 } from "../../../redux/reservation/reservation.actions";
+import {BigCenteredContainer} from "../../common-styles/common.styles";
 
 const ReservationsForTable = ({
                                   table, reservations, thereAreMoreReservations,
@@ -56,7 +59,7 @@ const ReservationsForTable = ({
                 <ListItem style={style} key={reservation.backendObject.id} alignItems='flex-start'>
                     <ListItemButton onClick={() => reservationClicked(reservation)}>
                         <ListItemText
-                            primary={`${format(reservation.dateAndTime, 'kk:mm:ss dd/MM/yyyy')}`}
+                            primary={`${format(reservation.dateAndTime, 'dd/MM/yyyy kk:mm:ss')}`}
                             secondary={
                                 <React.Fragment>
                                     <Typography
@@ -78,6 +81,9 @@ const ReservationsForTable = ({
             return (
                 <ListItem style={style} key={'MORE'} alignItems='flex-start'>
                     <ListItemButton onClick={() => doGetReservations(table)}>
+                        <ListItemIcon>
+                            <CloudDownloadIcon/>
+                        </ListItemIcon>
                         <ListItemText
                             primary={`Load more`}
                         />
@@ -89,48 +95,70 @@ const ReservationsForTable = ({
 
     const filterOptions = [
         {buttonTitle: 'See all reservations', sort: 'dateAndTime', query: undefined},
-        {buttonTitle: 'See future reservations', sort: 'dateAndTime', query: (q) => q.greaterThan('dateAndTime', new Date()) },
-        {buttonTitle: 'See past reservations', sort: '-dateAndTime', query: (q) => q.lessThan('dateAndTime', new Date())}
+        {
+            buttonTitle: 'See future reservations',
+            sort: 'dateAndTime',
+            query: (q) => q.greaterThan('dateAndTime', new Date())
+        },
+        {
+            buttonTitle: 'See past reservations',
+            sort: '-dateAndTime',
+            query: (q) => q.lessThan('dateAndTime', new Date())
+        }
     ];
 
     const [openFilterOptions, setOpenFilterOptions] = React.useState(false);
     const filterOptionsAnchorRef = React.useRef(null);
     const [selectedFilterIndex, setSelectedFilterIndex] = React.useState(0);
 
-    return <ReservationsForTableContainer>
-        <span>{`Reservations for table #${table.reference} [${table.seats}]`}</span>
-        <br/>
-        <ButtonGroup variant="contained" ref={filterOptionsAnchorRef}>
-            <Button onClick={() => {
-                setOpenFilterOptions((prevOpen) => !prevOpen);
-            }}>{filterOptions[selectedFilterIndex].buttonTitle}</Button>
-            <Button
-                size="small"
-                aria-controls={openFilterOptions ? 'split-button-menu' : undefined}
-                aria-expanded={openFilterOptions ? 'true' : undefined}
-                aria-label="select merge strategy"
-                aria-haspopup="menu"
-                onClick={() => {
-                    setOpenFilterOptions((prevOpen) => !prevOpen);
-                }}
-            >
-                <ArrowDropDownIcon/>
-            </Button>
-        </ButtonGroup>
-        <ReservationsForTableCreate table={table}/>
-        <Box
-            sx={{width: '100%', height: 400, maxWidth: 360, bgcolor: 'background.paper'}}
-        >
-            <FixedSizeList
-                height={400}
-                width={'100%'}
-                itemSize={80}
-                itemCount={reservations.length + (thereAreMoreReservations ? 1 : 0)}
-                overscanCount={5}
-            >
-                {renderRow}
-            </FixedSizeList>
-        </Box>
+    return <BigCenteredContainer>
+        <Row>
+            <Col>
+                <Typography variant='h5'
+                            align='center'>{`Reservations for table #${table.reference} [${table.seats}]`}</Typography>
+            </Col>
+            <Col className='justify-content-end'>
+                <ReservationsForTableCreate table={table}/>
+                <span> </span>
+                <ButtonGroup variant="contained" ref={filterOptionsAnchorRef}>
+                    <Button onClick={() => {
+                        setOpenFilterOptions((prevOpen) => !prevOpen);
+                    }}>{filterOptions[selectedFilterIndex].buttonTitle}</Button>
+                    <Button
+                        size="small"
+                        aria-controls={openFilterOptions ? 'split-button-menu' : undefined}
+                        aria-expanded={openFilterOptions ? 'true' : undefined}
+                        aria-label="select merge strategy"
+                        aria-haspopup="menu"
+                        onClick={() => {
+                            setOpenFilterOptions((prevOpen) => !prevOpen);
+                        }}
+                    >
+                        <ArrowDropDownIcon/>
+                    </Button>
+                </ButtonGroup>
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                <Divider/>
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                <Container maxWidth='sm'>
+                    <FixedSizeList
+                        height={400}
+                        width={'100%'}
+                        itemSize={80}
+                        itemCount={reservations.length + (thereAreMoreReservations ? 1 : 0)}
+                        overscanCount={5}
+                    >
+                        {renderRow}
+                    </FixedSizeList>
+                </Container>
+            </Col>
+        </Row>
         <ReservationForTableViewer
             reservation={reservationBeingEdited}
             setReservationDetails={setReservationBeingEdited}
@@ -181,8 +209,7 @@ const ReservationsForTable = ({
                 </Grow>
             )}
         </Popper>
-
-    </ReservationsForTableContainer>;
+    </BigCenteredContainer>;
 };
 
 export default connect(

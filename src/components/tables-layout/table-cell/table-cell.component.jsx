@@ -16,8 +16,9 @@ const TableCell = ({table, onTableClick, allowDragging}) => {
     }));
 
     return (
-        <TableCellContainer ref={allowDragging ? drag : null} table={table} onClick={() => onTableClick(table)}
-                            isDragging={isDragging} allowDragging={allowDragging}>
+        <TableCellContainer ref={allowDragging ? drag : null} table={table}
+                            onClick={onTableClick ? () => onTableClick(table) : null}
+                            isDragging={isDragging} allowDragging={allowDragging} allowClicking={!!onTableClick}>
             <ReferenceContainer>{`#${table.reference}`}</ReferenceContainer>
             <SeatsContainer>{`[${table.seats}]`}</SeatsContainer>
         </TableCellContainer>

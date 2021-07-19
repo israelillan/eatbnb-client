@@ -63,17 +63,17 @@ function* getTables() {
     try {
         let results = [];
         let skip = 0;
-        const limit = 100;
+        const LIMIT = 100;
         while(true) {
             const query = new Parse.Query('Table')
-            query.limit(limit);
+            query.limit(LIMIT);
             query.skip(skip);
             const tempResults = yield query.find();
             results = results.concat(tempResults);
-            if (tempResults.length < limit) {
+            if (tempResults.length < LIMIT) {
                 break;
             }
-            skip += limit;
+            skip += LIMIT;
         }
         const tables = results.map(r => {
             return tableFromBackendObject(r)

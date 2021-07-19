@@ -21,9 +21,9 @@ const TablesLayout = ({layout, onCellClicked, onTableClicked, onTableDropped}) =
             const index = `${i},${j}`;
             const table = index in layoutMap ? layoutMap[index] : null;
             cells.push(
-                <Grid key={i * MAX_ROWS + j} item xs={1} onClick={table ? null : () => onCellClicked(i, j)}>
+                <Grid key={i * MAX_ROWS + j} item xs={1}>
                     {table ?
-                        <TableCell sx={{minHeight: 30, minWidth: 30}} table={table} allowDragging={true}
+                        <TableCell sx={{minHeight: 30, minWidth: 30}} table={table} allowDragging={!!onTableDropped}
                                    onTableClick={onTableClicked} /> :
                         <EmptyCell sx={{minHeight: 30, minWidth: 30}} x={i} y={j}
                                    onClick={onCellClicked}

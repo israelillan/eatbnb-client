@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {Button} from "react-bootstrap";
 import {createReservationStart} from "../../../redux/reservation/reservation.actions";
 import {connect} from "react-redux";
-import {ReservationsForTableCreateContainer} from "./reservations-for-table-create.styles";
 import {roundToHour} from "../../../utils/date";
 import ReservationForTableViewer from "../reservation-for-table-viewer/reservation-for-table-viewer.component";
+import {Button} from "@material-ui/core";
 
 const ReservationsForTableCreate = ({table, doCreateReservation}) => {
     const [reservationToBeCreated, setReservationToBeCreated] = useState(null);
@@ -14,7 +13,7 @@ const ReservationsForTableCreate = ({table, doCreateReservation}) => {
         setReservationToBeCreated(null);
     }
 
-    return <ReservationsForTableCreateContainer>
+    return <>
         <Button onClick={() => {
             setReservationToBeCreated({
                 dateAndTime: roundToHour(new Date()),
@@ -28,7 +27,7 @@ const ReservationsForTableCreate = ({table, doCreateReservation}) => {
             onHide={() => setReservationToBeCreated(null)}
             onAccept={createReservation}
         />
-    </ReservationsForTableCreateContainer>;
+    </>;
 };
 
 export default connect(

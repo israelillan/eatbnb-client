@@ -1,9 +1,9 @@
 import styled, {css} from 'styled-components';
 
-const getDragStyle = ({isDragging, allowDragging}) => (
+const getDragStyle = ({isDragging, allowDragging, allowClicking}) => (
     css`
       opacity: ${isDragging ? 0.5 : 1.0};
-      cursor: ${allowDragging ? 'move' : 'pointer'};
+      cursor: ${allowDragging ? 'move' : allowClicking ? 'pointer' : 'none'};
     `
 )
 

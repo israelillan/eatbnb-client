@@ -13,7 +13,6 @@ const TablesLayoutEditorPage = ({dispatchCreateTable, dispatchUpdateTable, dispa
     const [tableSeats, setTableSeats] = useState(4)
 
     const cellClicked = (x, y) => {
-        console.log(`${x} ${y}`);
         setSelectedCell({x, y, table: null});
         setOpenModal(true);
     };

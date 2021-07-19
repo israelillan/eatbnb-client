@@ -2,7 +2,6 @@ import {all, put, select, takeLatest} from "redux-saga/effects";
 import Parse from "../../backend/parse.utils";
 import ReservationActionsTypes from "./reservation.actions.types";
 import {
-    backendError,
     createReservationSuccess,
     deleteReservationSuccess,
     getReservationsReportSuccess,
@@ -11,9 +10,11 @@ import {
 } from "./reservation.actions";
 import {reservationFromBackendObject} from "./reservation.utils";
 import {selectQuery, selectReservations, selectSort, selectTable} from "./reservation.selectors";
+import {backendError, loadingEnd, loadingStart} from "../backend/backend.actions";
 
 function* createReservation({payload: {table, dateAndTime, customerName, customerPhone}}) {
     try {
+        yield put(loadingStart());
         const reservation = new Parse.Object('Reservation');
         reservation.set('table', table.backendObject);
         reservation.set('dateAndTime', dateAndTime);
@@ -22,6 +23,7 @@ function* createReservation({payload: {table, dateAndTime, customerName, custome
         const result = yield reservation.save();
         yield put(createReservationSuccess(reservationFromBackendObject(result, table)));
         yield queryReservations({payload: {table}});
+        yield put(loadingEnd());
     } catch (error) {
         yield put(backendError(error));
     }
@@ -33,12 +35,14 @@ export function* onCreateReservationStart() {
 
 function* updateReservation({payload: {reservation, table, dateAndTime, customerName, customerPhone}}) {
     try {
+        yield put(loadingStart());
         reservation.backendObject.set('table', table.backendObject);
         reservation.backendObject.set('dateAndTime', dateAndTime);
         reservation.backendObject.set('customerName', customerName);
         reservation.backendObject.set('customerPhone', customerPhone);
         const result = yield reservation.backendObject.save();
         yield put(updateReservationSuccess(reservationFromBackendObject(result, table)));
+        yield put(loadingEnd());
     } catch (error) {
         yield put(backendError(error));
     }
@@ -50,8 +54,10 @@ export function* onUpdateReservationStart() {
 
 function* deleteReservation({payload: reservation}) {
     try {
+        yield put(loadingStart());
         yield reservation.backendObject.destroy();
         yield put(deleteReservationSuccess(reservation));
+        yield put(loadingEnd());
     } catch (error) {
         yield put(backendError(error));
     }
@@ -63,6 +69,7 @@ export function* onDeleteReservationStart() {
 
 function* queryReservations({payload: {table, sort, query: reservationsQuery}}) {
     try {
+        yield put(loadingStart());
         const currentSort = yield select(selectSort);
         let currentTable = yield select(selectTable);
 
@@ -95,6 +102,7 @@ function* queryReservations({payload: {table, sort, query: reservationsQuery}}) 
         });
         yield put(getReservationsSuccess(currentReservations.concat(reservations), table, sort, reservationsQuery,
             results.length === LIMIT));
+        yield put(loadingEnd());
     } catch (error) {
         yield put(backendError(error));
     }
@@ -106,6 +114,7 @@ export function* onGetReservationsStart() {
 
 function* queryReservationsReport({payload: {date}}) {
     try {
+        yield put(loadingStart());
         const today = new Date(date);
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
@@ -146,6 +155,7 @@ function* queryReservationsReport({payload: {date}}) {
             );
         }
         yield put(getReservationsReportSuccess(reservationsReport));
+        yield put(loadingEnd());
     } catch (error) {
         yield put(backendError(error));
     }

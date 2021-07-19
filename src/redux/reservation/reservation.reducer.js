@@ -5,11 +5,6 @@ import UserActionTypes from "../user/user.actions.types";
 
 const reservationReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case ReservationActionsTypes.RESERVATION_BACKEND_ERROR:
-            return {
-                ...state,
-                error: action.payload.error
-            }
         case UserActionTypes.SIGN_OUT_SUCCESS:
             return {
                 ...state,

@@ -83,7 +83,7 @@ describe('signed it reservation tests', () => {
             createReservationStart(table, reservationDate, customerName, customerPhone),
             onCreateReservationStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(1);
         expect(finalState.reservation.reservations[0].backendObject).toBeTruthy();
         expect(finalState.reservation.reservations[0].table.backendObject.id).toEqual(table.backendObject.id);
@@ -109,7 +109,7 @@ describe('signed it reservation tests', () => {
                 customerPhone + "_final"),
             onUpdateReservationStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(1);
         expect(finalState.reservation.reservations[0].backendObject).toBeTruthy();
         expect(finalState.reservation.reservations[0].table.backendObject.id).toEqual(anotherTable.backendObject.id);
@@ -138,7 +138,7 @@ describe('signed it reservation tests', () => {
                 customerPhone + "_final"),
             onUpdateReservationStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(1);
         expect(finalState.reservation.reservations[0].backendObject).toBeTruthy();
         expect(finalState.reservation.reservations[0].table.backendObject.id).toEqual(anotherTable.backendObject.id);
@@ -158,7 +158,7 @@ describe('signed it reservation tests', () => {
             deleteReservationStart(reservationCreationSagaResult.finalState.reservation.reservations[0]),
             onDeleteReservationStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(0);
     });
     it('clear reservations on sign out', async () => {
@@ -170,7 +170,7 @@ describe('signed it reservation tests', () => {
             onCreateReservationStart());
         const {finalState} = await testSaga(reservationCreationSagaResult.finalState, signOutStart(), onSignOutStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(0);
     });
     it('read reservations paginated', async () => {
@@ -194,13 +194,13 @@ describe('signed it reservation tests', () => {
         const {finalState: initial100State} = await testSaga({reservation: INITIAL_STATE},
             getReservationsStart(table), onGetReservationsStart());
 
-        expect(initial100State.reservation.error).toBeFalsy();
+        expect(initial100State.backend.error).toBeFalsy();
         expect(initial100State.reservation.reservations.length).toEqual(100);
 
         const {finalState} = await testSaga(initial100State,
             getReservationsStart(table), onGetReservationsStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(150);
     });
     it('sort reservations', async () => {
@@ -225,7 +225,7 @@ describe('signed it reservation tests', () => {
         const {finalState: ascendingState} = await testSaga({reservation: INITIAL_STATE},
             getReservationsStart(table, 'dateAndTime'), onGetReservationsStart());
 
-        expect(ascendingState.reservation.error).toBeFalsy();
+        expect(ascendingState.backend.error).toBeFalsy();
         expect(ascendingState.reservation.reservations.length).toEqual(8);
         let prev = ascendingState.reservation.reservations[0].dateAndTime;
         for (let i = 1; i < ascendingState.reservation.reservations.length; i++) {
@@ -236,7 +236,7 @@ describe('signed it reservation tests', () => {
         const {finalState: descendingState} = await testSaga(ascendingState,
             getReservationsStart(table, '-dateAndTime'), onGetReservationsStart());
 
-        expect(descendingState.reservation.error).toBeFalsy();
+        expect(descendingState.backend.error).toBeFalsy();
         expect(descendingState.reservation.reservations.length).toEqual(8);
         prev = descendingState.reservation.reservations[0].dateAndTime;
         for (let i = 1; i < descendingState.reservation.reservations.length; i++) {
@@ -270,7 +270,7 @@ describe('signed it reservation tests', () => {
                 q.greaterThan('dateAndTime', now)
             }), onGetReservationsStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(4);
         finalState.reservation.reservations.forEach((r) => {
             expect(r.dateAndTime > now).toBeTruthy();
@@ -302,7 +302,7 @@ describe('signed it reservation tests', () => {
                 q.lessThan('dateAndTime', now)
             }), onGetReservationsStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(4);
         finalState.reservation.reservations.forEach((r) => {
             expect(r.dateAndTime < now).toBeTruthy();
@@ -330,13 +330,13 @@ describe('signed it reservation tests', () => {
         const {finalState: ascendingState} = await testSaga({reservation: INITIAL_STATE},
             getReservationsStart(table, 'dateAndTime'), onGetReservationsStart());
 
-        expect(ascendingState.reservation.error).toBeFalsy();
+        expect(ascendingState.backend.error).toBeFalsy();
         expect(ascendingState.reservation.reservations.length).toEqual(8);
 
         const {finalState: descendingState} = await testSaga(ascendingState,
             getReservationsStart(table, '-dateAndTime'), onGetReservationsStart());
 
-        expect(descendingState.reservation.error).toBeFalsy();
+        expect(descendingState.backend.error).toBeFalsy();
         expect(descendingState.reservation.reservations.length).toEqual(8);
     });
     it('clearing gotten reservations when querying another table', async () => {
@@ -362,13 +362,13 @@ describe('signed it reservation tests', () => {
         const {finalState: firstTable} = await testSaga({reservation: INITIAL_STATE},
             getReservationsStart(table), onGetReservationsStart());
 
-        expect(firstTable.reservation.error).toBeFalsy();
+        expect(firstTable.backend.error).toBeFalsy();
         expect(firstTable.reservation.reservations.length).toEqual(8);
 
         const {finalState: secondTable} = await testSaga(firstTable,
             getReservationsStart(anotherTable), onGetReservationsStart());
 
-        expect(secondTable.reservation.error).toBeFalsy();
+        expect(secondTable.backend.error).toBeFalsy();
         expect(secondTable.reservation.reservations.length).toEqual(0);
     });
     it('clearing gotten reservations query changes', async () => {
@@ -396,7 +396,7 @@ describe('signed it reservation tests', () => {
                 q.greaterThan('dateAndTime', initialReservationDate)
             }), onGetReservationsStart());
 
-        expect(ascendingState.reservation.error).toBeFalsy();
+        expect(ascendingState.backend.error).toBeFalsy();
         expect(ascendingState.reservation.reservations.length).toEqual(8);
 
         const {finalState: descendingState} = await testSaga(ascendingState,
@@ -404,7 +404,7 @@ describe('signed it reservation tests', () => {
                 q.lessThan('dateAndTime', initialReservationDate)
             }), onGetReservationsStart());
 
-        expect(descendingState.reservation.error).toBeFalsy();
+        expect(descendingState.backend.error).toBeFalsy();
         expect(descendingState.reservation.reservations.length).toEqual(0);
     });
     it('get reservations report', async () => {
@@ -439,7 +439,7 @@ describe('signed it reservation tests', () => {
         const {finalState} = await testSaga({reservation: INITIAL_STATE, table: TABLE_INITIAL_STATE },
             getReservationsReportStart(now), onGetReservationsReportStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservationsReport[1].reservations.length).toEqual(8);
         expect(finalState.reservation.reservationsReport[2].reservations.length).toEqual(8);
     });
@@ -452,12 +452,12 @@ describe('signed it reservation tests', () => {
             createReservationStart(table, reservationDate, customerName, customerPhone),
             onCreateReservationStart());
 
-        expect(creationState.reservation.error).toBeFalsy();
+        expect(creationState.backend.error).toBeFalsy();
         const {finalState} = await testSaga(creationState,
             createReservationStart(table, reservationDate, "other " + customerName, "other " + customerPhone),
             onCreateReservationStart());
 
-        expect(finalState.reservation.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.reservation.reservations[0].customerName).toEqual(customerName);
         expect(finalState.reservation.reservations[0].customerPhone).toEqual(customerPhone);
     });
@@ -468,7 +468,7 @@ describe('signed it reservation tests', () => {
         const {finalState: firstCreationState} = await testSaga({reservation: INITIAL_STATE},
             createReservationStart(table, firstReservationDate, customerName, customerPhone),
             onCreateReservationStart());
-        expect(firstCreationState.reservation.error).toBeFalsy();
+        expect(firstCreationState.backend.error).toBeFalsy();
 
         const secondReservationDate = new Date(2021, 1, 1, 1, 0);
         const otherCustomerName = "other " + customerName;
@@ -476,14 +476,14 @@ describe('signed it reservation tests', () => {
         const {finalState: secondCreationState} = await testSaga(firstCreationState,
             createReservationStart(table, secondReservationDate, otherCustomerName, otherCustomerPhone),
             onCreateReservationStart());
-        expect(secondCreationState.reservation.error).toBeFalsy();
+        expect(secondCreationState.backend.error).toBeFalsy();
 
         const {finalState} = await testSaga(secondCreationState,
             updateReservationStart(secondCreationState.reservation.reservations[1],
                 table, firstReservationDate),
             onUpdateReservationStart());
 
-        expect(finalState.reservation.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.reservation.reservations[0].dateAndTime).toEqual(firstReservationDate);
         expect(finalState.reservation.reservations[0].customerName).toEqual(customerName);
         expect(finalState.reservation.reservations[0].customerPhone).toEqual(customerPhone);
@@ -536,14 +536,14 @@ describe('signed in reservation tests against other user', () => {
             createReservationStart(otherUserTable, reservationDate, customerName, customerPhone),
             onCreateReservationStart());
 
-        expect(finalState.reservation.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
         expect(finalState.reservation.reservations.length).toEqual(0);
     });
     it('cannot list reservations for other user\'s table', async () => {
         const {finalState} = await testSaga({reservation: INITIAL_STATE},
             getReservationsStart(otherUserTable), onGetReservationsStart());
 
-        expect(finalState.reservation.error).toBeFalsy();
+        expect(finalState.backend.error).toBeFalsy();
         expect(finalState.reservation.reservations.length).toEqual(0);
     });
     it('cannot modify other user\'s reservations', async () => {
@@ -558,13 +558,13 @@ describe('signed in reservation tests against other user', () => {
                 customerPhone + "_final"),
             onUpdateReservationStart());
 
-        expect(finalState.reservation.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
     });
     it('cannot delete other user\'s reservations', async () => {
         const {finalState} = await testSaga({reservation: INITIAL_STATE},
             deleteReservationStart(otherUserReservation),
             onDeleteReservationStart());
 
-        expect(finalState.reservation.error).toBeTruthy();
+        expect(finalState.backend.error).toBeTruthy();
     });
 });

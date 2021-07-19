@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { SpinnerContainer, SpinnerOverlay } from './spinner.styles';
+import {Backdrop, CircularProgress} from "@material-ui/core";
 
 const Spinner = () => (
-    <SpinnerOverlay>
-        <SpinnerContainer />
-    </SpinnerOverlay>
+    <Backdrop open={true}>
+        <CircularProgress/>
+    </Backdrop>
+
 );
 
 export default Spinner;

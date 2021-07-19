@@ -1,10 +1,5 @@
 import ReservationActionsTypes from "./reservation.actions.types";
 
-export const backendError = (error) => ({
-    type: ReservationActionsTypes.RESERVATION_BACKEND_ERROR,
-    payload: {error}
-});
-
 export const createReservationStart = (table, dateAndTime, customerName, customerPhone) => ({
     type: ReservationActionsTypes.CREATE_RESERVATION_START,
     payload: {table, dateAndTime, customerName, customerPhone}

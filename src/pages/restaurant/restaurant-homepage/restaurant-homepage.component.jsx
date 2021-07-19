@@ -32,7 +32,7 @@ const RestaurantHomePage = ({reservationsReport, getReservationsReport}) => {
             <Grid key={tableReference} item xs>
                 <Paper>
                     <Typography variant='h5'>{`Table #${tableReference}`}</Typography>
-                    <Divider />
+                    <Divider/>
                     {tableReservations}
                 </Paper>
             </Grid>);
@@ -68,5 +68,5 @@ export default connect(createStructuredSelector({
         reservationsReport: selectReservationsReport
     }),
     dispatch => ({
-        getReservationsReport: (date) => dispatch(getReservationsReportStart(date)),
+        getReservationsReport: (date) => dispatch(getReservationsReportStart(date))
     }))(RestaurantHomePage);

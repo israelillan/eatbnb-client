@@ -19,6 +19,12 @@ const backendReducer = (state = INITIAL_STATE, action) => {
                 loading: false,
                 error: action.payload
             }
+        case BackendActionsTypes.CLEAR_BACKEND_ERROR:
+            return {
+                ...state,
+                loading: false,
+                error: null
+            }
         default:
             return state;
 

@@ -12,3 +12,7 @@ export const backendError = (error) => ({
     type: BackendActionsTypes.BACKEND_ERROR,
     payload: {error}
 });
+
+export const clearBackendError = () => ({
+    type: BackendActionsTypes.CLEAR_BACKEND_ERROR,
+});

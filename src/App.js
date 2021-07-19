@@ -9,13 +9,14 @@ import GuardedRoute from "./components/guarded-route/guarded-route.component";
 
 import { checkUserSession } from './redux/user/user.actions';
 import Header from "./components/header/header.component";
-import TablesLayoutEditorPage from "./pages/restaurant/tables-layout-editor/tables-layout-editor.component";
-import LoadingFromBackend from "./components/loading/loading-component";
+import LoadingFromBackend from "./components/loading-from-backend/loading-from-backend-component";
+import BackendErrorNotification from "./components/backend-error-notification/backend-error-notification.component";
 
 const HomePage = lazy(() => import('./pages/homepage/homepage.component'));
 const SignUpPage = lazy(() => import('./pages/user/sign-up/sign-up.component'));
 const SignInPage = lazy(() => import('./pages/user/sign-in/sign-in.component'));
 const VerifyEmailPage = lazy(() => import("./pages/user/verify-email/verify-email.component"));
+const TablesLayoutEditorPage = lazy (() => import("./pages/restaurant/tables-layout-editor/tables-layout-editor.component"));
 const RestaurantHomePage = lazy(() => import("./pages/restaurant/restaurant-homepage/restaurant-homepage.component"));
 const RestaurantNamePage = lazy(() => import("./pages/restaurant/restaurant-name/restaurant-name.component"));
 const ReservationsPage = lazy(() => import("./pages/restaurant/reservations/reservations.component"));
@@ -58,6 +59,7 @@ const App = ({checkUserSession, currentUser}) => {
                 </Suspense>
             </Switch>
             <LoadingFromBackend />
+            <BackendErrorNotification />
         </div>
     );
 };
